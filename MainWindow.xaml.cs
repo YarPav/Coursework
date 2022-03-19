@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,7 +157,7 @@ namespace Do_platform
             }
             protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {
-                optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;user=root;password=;database=doplatform");
+                optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;user=root;password=root;database=doplatform");
             }
         }
 
@@ -208,18 +208,21 @@ namespace Do_platform
 
         private void AddCoursesButton_Click(object sender, RoutedEventArgs e)
         {
-            Course newCourse = new Course()
+            if (AddCourseTextBox.Text != "")
             {
-                Name = AddCourseTextBox.Text,
-                Teacher_id = CurrentTeacher.Id
+                Course newCourse = new Course()
+                {
+                    Name = AddCourseTextBox.Text.Trim(),
+                    Teacher_id = CurrentTeacher.Id
 
-            };
-            using (ApplicatonContext db = new ApplicatonContext())
-            {
-                db.course.Add(newCourse);
-                db.SaveChanges();
-                coursesList.Items.Add(GetCourses()[GetCourses().Count - 1].Name);
-            }
+                };
+                using (ApplicatonContext db = new ApplicatonContext())
+                {
+                    db.course.Add(newCourse);
+                    db.SaveChanges();
+                    coursesList.Items.Add(GetCourses()[GetCourses().Count - 1].Name);
+                }
+            } 
         }
 
         private void loginBox_LostFocus(object sender, RoutedEventArgs e)
