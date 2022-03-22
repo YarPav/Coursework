@@ -54,33 +54,16 @@ namespace Do_platform
             public string Name { get; set; }
             public int Teacher_id { get; set; }
         }
-        public List<Teacher> getTeachers()
+        public class Lecture
         {
-            using (ApplicatonContext db = new ApplicatonContext())
-            {
-                List<Teacher> t = new List<Teacher>();
-                t = db.teacher.ToList();
-                return t;
-            }
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Theme { get; set; }
+            public string Lecture_body { get; set; }
+            public int Teacher_id { get; set; }
         }
-        public List<Student> getStudents()
-        {
-            using (ApplicatonContext db = new ApplicatonContext())
-            {
-                List<Student> s = new List<Student>();
-                s = db.student.ToList();
-                return s;
-            }
-        }
-        public List<Course> GetCourses()
-        {
-            using (ApplicatonContext db = new ApplicatonContext())
-            {
-                List<Course> c = new List<Course>();
-                c = db.course.ToList();
-                return c;
-            }
-        }
+        private List<Course> CoursesIdList = new List<Course>();
+        private List<Lecture> LecturesIdList = new List<Lecture>();
 
         public void DisplayStudentProfile (Student i)
         {
@@ -97,12 +80,25 @@ namespace Do_platform
 
         public void DisplayCourses (int currentTeacherId)
         {
-           foreach (Course i in GetCourses())
+           foreach (Course i in ApplicatonContext.GetCourses())
             {
                 if (i.Teacher_id == currentTeacherId)
                 {
                     coursesList.Items.Add(i.Name);
+                    CoursesIdList.Add(i);
                 } 
+            }
+        }
+
+        public void DisplayLectures(int currentTeacherId)
+        {
+            foreach (Lecture l in ApplicatonContext.GetLectures())
+            {
+                if (l.Teacher_id == currentTeacherId)
+                {
+                    LecturesList.Items.Add(l.Name);
+                    LecturesIdList.Add(l);
+                }
             }
         }
 
@@ -110,7 +106,7 @@ namespace Do_platform
             isNewUser = true;
         public void authorizationUsers ()
         {
-            foreach (Student i in getStudents())
+            foreach (Student i in ApplicatonContext.GetStudents())
             {
                 if (loginBox.Text == i.Login)
                 {
@@ -127,7 +123,7 @@ namespace Do_platform
             }
             if (!isLogined)
             {
-                foreach (Teacher i in getTeachers())
+                foreach (Teacher i in ApplicatonContext.GetTeachers())
                 {
                     if (loginBox.Text == i.Login)
                     {
@@ -145,21 +141,7 @@ namespace Do_platform
             }
         }
 
-        public class ApplicatonContext : DbContext
-        {
-            public DbSet<Teacher> teacher { get; set; }
-            public DbSet<Student> student { get; set; }
-            public DbSet<Course> course { get; set; }
-            public ApplicatonContext()
-            {
-                Database.EnsureCreated();
-           
-            }
-            protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            {
-                optionsBuilder.UseMySQL("server=127.0.0.1;port=3306;user=root;password=root;database=doplatform");
-            }
-        }
+        
 
         public void authorizationBtn(object sender, RoutedEventArgs e)
         {
@@ -169,7 +151,7 @@ namespace Do_platform
                 if (isNewUser)
                 {
                     autoText.Text = "new";
-                    Student newStudent = new Student()
+                    ApplicatonContext.AddStudent(new Student()
                     {
                         Name = loginBox.Text,
                         Lastname = "",
@@ -177,12 +159,7 @@ namespace Do_platform
                         Password = passwordBox.Password,
                         Course_id = null
 
-                    };
-                    using (ApplicatonContext db = new ApplicatonContext())
-                    {
-                        db.student.Add(newStudent);
-                        db.SaveChanges();
-                    }
+                    });
                 }
                 if (!isLogined)
                 {
@@ -210,19 +187,55 @@ namespace Do_platform
         {
             if (AddCourseTextBox.Text != "")
             {
-                Course newCourse = new Course()
+                ApplicatonContext.AddCourse(new Course()
                 {
                     Name = AddCourseTextBox.Text.Trim(),
                     Teacher_id = CurrentTeacher.Id
-
-                };
-                using (ApplicatonContext db = new ApplicatonContext())
+                });
+                if (ApplicatonContext.GetCourses()[ApplicatonContext.GetCourses().Count - 1].Name == AddCourseTextBox.Text)
                 {
-                    db.course.Add(newCourse);
-                    db.SaveChanges();
-                    coursesList.Items.Add(GetCourses()[GetCourses().Count - 1].Name);
+                    coursesList.Items.Add(ApplicatonContext.GetCourses()[ApplicatonContext.GetCourses().Count - 1].Name);
                 }
+                
             } 
+        }
+
+        private void EditCourseBtn(object sender, RoutedEventArgs e)
+        {
+            Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem);
+            EditCourse.Content = i.Id;
+        }
+
+        private void LectureButton_Click(object sender, RoutedEventArgs e)
+        {
+            TeacherProfile.Visibility = Visibility.Hidden;
+            lectures.Visibility = Visibility;
+            if (CurrentUser == "Student")
+            {
+                DisplayLectures(CurrentStudent.Id);
+
+            }
+            else
+            {
+                DisplayLectures(CurrentTeacher.Id);
+            }
+        }
+
+        private void AddLecturesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddLectureTextBox.Text != "")
+            {
+                ApplicatonContext.AddLecture(new Lecture()
+                {
+                    Name = AddLectureTextBox.Text.Trim(),
+                    Teacher_id = CurrentTeacher.Id
+                });
+                if (ApplicatonContext.GetLectures()[ApplicatonContext.GetLectures().Count - 1].Name == AddLectureTextBox.Text)
+                {
+                    LecturesList.Items.Add(ApplicatonContext.GetLectures()[ApplicatonContext.GetLectures().Count - 1].Name);
+                }
+
+            }
         }
 
         private void loginBox_LostFocus(object sender, RoutedEventArgs e)

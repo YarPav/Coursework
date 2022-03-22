@@ -43,17 +43,20 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Button Content="Курсы" Grid.Column="0" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="CoursesBtn_Click"></Button>
-            <Button Content="Тесты" Grid.Column="1" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
-            <Button Content="Оценки" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
-            <Button Content="Студенты" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
-            <TextBlock x:Name="userName" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
+            <Button Content="Лекции" Grid.Column="1" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="LectureButton_Click"></Button>
+            <Button Content="Тесты" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <Button Content="Оценки" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <Button Content="Студенты" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <TextBlock x:Name="userName" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
         </Grid>
         <Grid x:Name="courses" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
                 <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
                 <RowDefinition Height="0.1*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -67,6 +70,27 @@
             <ListBox x:Name="coursesList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
                 <TextBlock FontSize="18px" FontWeight="bold">Курсы</TextBlock>
             </ListBox>
+            <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditCourseBtn" x:Name="EditCourse"></Button>
+        </Grid>
+        <Grid x:Name="lectures" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Margin="10px 0 0 0" x:Name="AddLectureTextBox"></TextBox>
+            <Button Grid.Column="1" Grid.Row="0" Content="→" FontSize="25px" VerticalContentAlignment="Center" Click="AddLecturesButton_Click"></Button>
+            <ListBox x:Name="LecturesList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
+                <TextBlock FontSize="18px" FontWeight="bold">Лекции</TextBlock>
+            </ListBox>
+            <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditCourseBtn" x:Name="EditLecture"></Button>
         </Grid>
     </Grid>
 
