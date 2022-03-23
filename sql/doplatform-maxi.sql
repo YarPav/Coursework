@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Мар 19 2022 г., 05:36
+-- Время создания: Мар 23 2022 г., 05:12
 -- Версия сервера: 8.0.24
 -- Версия PHP: 8.0.14
 
@@ -42,17 +42,52 @@ INSERT INTO `course` (`Id`, `Name`, `Teacher_id`) VALUES
 (3, 'python', 1),
 (7, '1c', 1),
 (8, 'php', 1),
-(9, '', 1),
-(10, 'rtrt', 1),
-(11, '', 1),
-(12, ' ', 1),
-(13, ' ', 1),
-(14, ' ', 1),
-(15, ' ', 1),
-(16, ' ', 1),
-(17, '    ', 1),
-(18, '    tyt', 1),
-(19, 'hjj', 2);
+(25, 'ty', 1),
+(26, 'java', 1),
+(27, 'js', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `lecture`
+--
+
+CREATE TABLE `lecture` (
+  `Id` int NOT NULL,
+  `Name` varchar(45) NOT NULL,
+  `Theme` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Lecture_body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `Teacher_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `lecture`
+--
+
+INSERT INTO `lecture` (`Id`, `Name`, `Theme`, `Lecture_body`, `Teacher_id`) VALUES
+(1, 'L1', 'theme of lecture 1', 'Lorem ipsum', 1),
+(2, 'L2', 'theme of lecture 2', 'Lorem ipsum', 1),
+(3, 'L3', 'theme of lecture 3', 'Lorem', 2),
+(4, 'L4', NULL, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `lecture_to_course`
+--
+
+CREATE TABLE `lecture_to_course` (
+  `Id` int UNSIGNED NOT NULL,
+  `Lecture_id` int NOT NULL,
+  `Course_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `lecture_to_course`
+--
+
+INSERT INTO `lecture_to_course` (`Id`, `Lecture_id`, `Course_id`) VALUES
+(1, 1, 7);
 
 -- --------------------------------------------------------
 
@@ -74,7 +109,9 @@ CREATE TABLE `student` (
 --
 
 INSERT INTO `student` (`Id`, `Name`, `Lastname`, `Login`, `Password`, `Course_id`) VALUES
-(1, 'student1', '', 'student1', '1', NULL);
+(1, 'student1', '', 'student1', '1', NULL),
+(2, 's1', '', 's1', 's1', NULL),
+(3, 's2', '', 's2', 's2', NULL);
 
 -- --------------------------------------------------------
 
@@ -110,6 +147,21 @@ ALTER TABLE `course`
   ADD KEY `Teacher_id` (`Teacher_id`);
 
 --
+-- Индексы таблицы `lecture`
+--
+ALTER TABLE `lecture`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `Teacher_id` (`Teacher_id`);
+
+--
+-- Индексы таблицы `lecture_to_course`
+--
+ALTER TABLE `lecture_to_course`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `Course_id` (`Course_id`,`Lecture_id`) USING BTREE,
+  ADD KEY `Lecture_id` (`Lecture_id`);
+
+--
 -- Индексы таблицы `student`
 --
 ALTER TABLE `student`
@@ -130,13 +182,25 @@ ALTER TABLE `teacher`
 -- AUTO_INCREMENT для таблицы `course`
 --
 ALTER TABLE `course`
-  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT для таблицы `lecture`
+--
+ALTER TABLE `lecture`
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT для таблицы `lecture_to_course`
+--
+ALTER TABLE `lecture_to_course`
+  MODIFY `Id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `student`
 --
 ALTER TABLE `student`
-  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `teacher`
@@ -153,6 +217,19 @@ ALTER TABLE `teacher`
 --
 ALTER TABLE `course`
   ADD CONSTRAINT `course_ibfk_1` FOREIGN KEY (`Teacher_id`) REFERENCES `teacher` (`Id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Ограничения внешнего ключа таблицы `lecture`
+--
+ALTER TABLE `lecture`
+  ADD CONSTRAINT `lecture_ibfk_1` FOREIGN KEY (`Teacher_id`) REFERENCES `teacher` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `lecture_to_course`
+--
+ALTER TABLE `lecture_to_course`
+  ADD CONSTRAINT `lecture_to_course_ibfk_1` FOREIGN KEY (`Course_id`) REFERENCES `course` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `lecture_to_course_ibfk_2` FOREIGN KEY (`Lecture_id`) REFERENCES `lecture` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `student`
