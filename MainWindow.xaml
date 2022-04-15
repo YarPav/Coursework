@@ -49,8 +49,46 @@
             <Button Content="Лекции" Grid.Column="1" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="LectureButton_Click"></Button>
             <Button Content="Тесты" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
             <Button Content="Оценки" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
-            <Button Content="Студенты" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <Button Content="Студенты" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentButton_Click"></Button>
             <TextBlock x:Name="userName" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
+        </Grid>
+        <Grid x:Name="StudentProfile" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="55px"></RowDefinition>
+                <RowDefinition Height="0.9*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="0.5*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Content="Курсы" Grid.Column="1" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentCourseButton_Click"></Button>
+            <Button Content="Лекции" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentLectureButton_Click"></Button>
+            <Button Content="Тесты" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <Button Content="Оценки" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <TextBlock x:Name="studentName" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
+        </Grid>
+        <Grid x:Name="studentLecture" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.05*"></RowDefinition>
+                <RowDefinition Height="0.85*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Button Content="Назад" Grid.Column="2" x:Name="studentLectureReturn" Click="studentLectureReturn_Click" Margin="0 0 10 0"></Button>
+            <TextBlock x:Name="studentLectureName" Grid.Column="1" FontSize="24px" VerticalAlignment="Center">Name</TextBlock>
+            <TextBlock x:Name="studentLectureTheme" Grid.Column="1" Grid.Row="1" FontSize="16px" VerticalAlignment="Center">Theme</TextBlock>
+            <ScrollViewer Grid.Column="1" Grid.Row="2" Margin="0 20 0 0">
+                <TextBlock x:Name="studentLectureBody" FontSize="14px" TextWrapping="Wrap" >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</TextBlock>
+            </ScrollViewer>
         </Grid>
         <Grid x:Name="courses" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -71,6 +109,7 @@
                 <TextBlock FontSize="18px" FontWeight="bold">Курсы</TextBlock>
             </ListBox>
             <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditCourseBtn" x:Name="EditCourse"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="couresReturn" Click="couresReturn_Click"></Button>
         </Grid>
         <Grid x:Name="lectures" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -90,7 +129,121 @@
             <ListBox x:Name="LecturesList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
                 <TextBlock FontSize="18px" FontWeight="bold">Лекции</TextBlock>
             </ListBox>
-            <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditCourseBtn" x:Name="EditLecture"></Button>
+            <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditLecture_Click" x:Name="EditLecture"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="lecturesReturn" Click="lecturesReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="EditLecturePage" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*" MaxHeight="500px"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18px" MaxWidth="500px">Редактирование</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" MaxWidth="500px">Название</TextBlock>
+            <TextBox Grid.Column="1" Grid.Row="2" MaxWidth="500px" x:Name="EditLectureName"></TextBox>
+            <TextBlock Grid.Row="3" Grid.Column="1" MaxWidth="500px">Тема</TextBlock>
+            <TextBox Grid.Column="1" Grid.Row="4" MaxWidth="500px" x:Name="EditLectureTheme"></TextBox>
+            <TextBlock Grid.Row="5" Grid.Column="1" MaxWidth="500px">Текст лекции</TextBlock>
+            <TextBox Grid.Column="1" Grid.Row="6" MaxWidth="500px" x:Name="EditLectureBody"></TextBox>
+            <Button Content="Сохранить" Grid.Column="1" Grid.Row="8" MaxWidth="500px" Click="EditLectureSave_Click" x:Name="EditLectureSave"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="editLecturesReturn" Click="editLecturesReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="EditCoursePage" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.05*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="18px" FontWeight="bold" Grid.Row="0" Grid.Column="0" x:Name="lect" Grid.ColumnSpan="4">Лекции</TextBlock>
+            <ListBox x:Name="LecturesToCourseList" Grid.Row="1" Grid.Column="2" Margin="0 20px"></ListBox>
+            <ComboBox x:Name="LecturesToCourseBox" Grid.Row="2" Grid.Column="2">
+                
+            </ComboBox>
+            <Button Content="Добавить" x:Name="LectureToCourseAdd" Click="LectureToCourseAdd_Click" Grid.Column="2" Grid.Row="4"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="editCoursesReturn" Click="editCoursesReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="students" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="18px" FontWeight="bold">Студенты</TextBlock>
+            <ListBox x:Name="studentsList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
+                
+            </ListBox>
+            <Button Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="EditStudent_Click" x:Name="EditStudent"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="studentsReturn" Click="studentsReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="AddStudentPage" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.05*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="18px" FontWeight="bold" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">Студенты</TextBlock>
+            <ListBox x:Name="StudentsToCourseList" Grid.Row="1" Grid.Column="2" Margin="0 20px"></ListBox>
+            <ComboBox x:Name="StudentsToCourseBox" Grid.Row="2" Grid.Column="2">
+
+            </ComboBox>
+            <Button Content="Добавить" x:Name="StudentToCourseAdd" Click="StudentToCourseAdd_Click" Grid.Column="2" Grid.Row="4"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="AddStudentsReturn" Click="AddStudentsReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="StudentCourse" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="StudentCoursesList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
+                <TextBlock FontSize="18px" FontWeight="bold">Курсы</TextBlock>
+            </ListBox>
+            <Button Content="Открыть" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="OpenCourse_Click" x:Name="OpenCourse"></Button>
+            <Button Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="StudentCourseReturn" Click="StudentCourseReturn_Click"></Button>
         </Grid>
     </Grid>
 

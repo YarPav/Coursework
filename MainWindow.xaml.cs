@@ -62,14 +62,27 @@ namespace Do_platform
             public string Lecture_body { get; set; }
             public int Teacher_id { get; set; }
         }
+        public class Lecture_to_Course
+        {
+            public int Id { get; set; }
+            public int Lecture_id { get; set; }
+            public int Course_id { get; set; }
+        }
+        public class Student_to_Course
+        {
+            public int Id { get; set; }
+            public int Student_id { get; set; }
+            public int Course_id { get; set; }
+        }
         private List<Course> CoursesIdList = new List<Course>();
         private List<Lecture> LecturesIdList = new List<Lecture>();
+        private List<Student> StudentsIdList = new List<Student>();
 
         public void DisplayStudentProfile (Student i)
         {
             authorization.Visibility = Visibility.Hidden;
-            userName.Text = i.role + ": " + i.Name + " " + i.Lastname;
-            
+            studentName.Text = i.Name + " " + i.Lastname;
+            StudentProfile.Visibility = Visibility;
         }
         public void DisplayTeacherProfile (Teacher i)
         {
@@ -78,26 +91,87 @@ namespace Do_platform
             TeacherProfile.Visibility = Visibility;
         }
 
-        public void DisplayCourses (int currentTeacherId)
+        public void DisplayCourses (int currentTeacherId, dynamic name, List<Course> list)
         {
-           foreach (Course i in ApplicatonContext.GetCourses())
+            name.Items.Clear();
+           foreach (Course i in ApplicatonContext.GetCourses(currentTeacherId))
             {
-                if (i.Teacher_id == currentTeacherId)
+                name.Items.Add(i.Name);
+                if (list != null)
                 {
-                    coursesList.Items.Add(i.Name);
-                    CoursesIdList.Add(i);
-                } 
+                    list.Add(i);
+                }
             }
         }
 
-        public void DisplayLectures(int currentTeacherId)
+        public void DisplayLectures(int currentTeacherId, dynamic name, List<Lecture> list)
         {
-            foreach (Lecture l in ApplicatonContext.GetLectures())
+            name.Items.Clear();
+            foreach (Lecture l in ApplicatonContext.GetLectures(currentTeacherId))
             {
-                if (l.Teacher_id == currentTeacherId)
+                name.Items.Add(l.Name);
+                if (list != null)
                 {
-                    LecturesList.Items.Add(l.Name);
-                    LecturesIdList.Add(l);
+                    list.Add(l);
+                }
+            }
+        }
+
+        public void DisplayLectureToCourse (int currentTeacherId, dynamic name, List<Lecture> list, int currentCourseId)
+        {
+            foreach (Lecture l in ApplicatonContext.GetLectureToCourse(currentTeacherId, currentCourseId))
+            {
+                name.Items.Add(l.Name);
+                if (list != null)
+                {
+                    list.Add(l);
+                }
+            }
+        }
+        public void DisplayStudents ()
+        {
+            studentsList.Items.Clear();
+            foreach (Student s in ApplicatonContext.GetStudents())
+            {
+                studentsList.Items.Add(s.Name);
+                StudentsIdList.Add(s);
+            }
+          
+        }
+
+        public void DisplayStudentToCourse(int currentTeacherId, dynamic name, List<Course> list, int currentStudentId)
+        {
+            foreach (Course c in ApplicatonContext.GetStudentToCourse(currentTeacherId, currentStudentId))
+            {
+                name.Items.Add(c.Name);
+                if (list != null)
+                {
+                    list.Add(c);
+                }
+            }
+        }
+
+        public void DisplayStudentToCourseForStudent(dynamic name, List<Course> list, int currentStudentId)
+        {
+            name.Items.Clear();
+            foreach (Course c in ApplicatonContext.GetStudentToCourseForStudent(currentStudentId))
+            {
+                name.Items.Add(c.Name);
+                if (list != null)
+                {
+                    list.Add(c);
+                }
+            }
+        }
+        public void DisplayAllStudentLectures(dynamic name, List<Lecture> list, int currentStudentId)
+        {
+            name.Items.Clear();
+            foreach (Lecture c in ApplicatonContext.GetAllStudentLectures(currentStudentId))
+            {
+                name.Items.Add(c.Name);
+                if (list != null)
+                {
+                    list.Add(c);
                 }
             }
         }
@@ -175,11 +249,11 @@ namespace Do_platform
             courses.Visibility = Visibility;
             if (CurrentUser == "Student")
             {
-                DisplayCourses(CurrentStudent.Id);
+                DisplayCourses(CurrentStudent.Id, coursesList, CoursesIdList);
                 
             } else
             {
-                DisplayCourses(CurrentTeacher.Id);
+                DisplayCourses(CurrentTeacher.Id, coursesList, CoursesIdList);
             }
         }
 
@@ -191,10 +265,11 @@ namespace Do_platform
                 {
                     Name = AddCourseTextBox.Text.Trim(),
                     Teacher_id = CurrentTeacher.Id
-                });
-                if (ApplicatonContext.GetCourses()[ApplicatonContext.GetCourses().Count - 1].Name == AddCourseTextBox.Text)
+                }, CurrentTeacher.Id);
+                
+                if (ApplicatonContext.IsAddedCourse)
                 {
-                    coursesList.Items.Add(ApplicatonContext.GetCourses()[ApplicatonContext.GetCourses().Count - 1].Name);
+                    coursesList.Items.Add(ApplicatonContext.GetCourses(CurrentTeacher.Id)[ApplicatonContext.GetCourses(CurrentTeacher.Id).Count - 1].Name);
                 }
                 
             } 
@@ -202,8 +277,17 @@ namespace Do_platform
 
         private void EditCourseBtn(object sender, RoutedEventArgs e)
         {
-            Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem);
-            EditCourse.Content = i.Id;
+            Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
+            List<Lecture_to_Course> lc = ApplicatonContext.GetLecturesToCourses(i.Id);
+            courses.Visibility = Visibility.Hidden;
+            EditCoursePage.Visibility = Visibility;
+            LecturesToCourseList.Items.Clear();
+            LecturesToCourseBox.Items.Clear();
+            foreach (Lecture_to_Course l in ApplicatonContext.GetLecturesToCourses(i.Id))
+            {
+                LecturesToCourseList.Items.Add(ApplicatonContext.GetLectures(CurrentTeacher.Id).Find(i => i.Id == l.Lecture_id).Name);
+            }
+            DisplayLectureToCourse(CurrentTeacher.Id, LecturesToCourseBox, LecturesIdList, i.Id);
         }
 
         private void LectureButton_Click(object sender, RoutedEventArgs e)
@@ -212,12 +296,12 @@ namespace Do_platform
             lectures.Visibility = Visibility;
             if (CurrentUser == "Student")
             {
-                DisplayLectures(CurrentStudent.Id);
+                DisplayLectures(CurrentStudent.Id, LecturesList, LecturesIdList);
 
             }
             else
             {
-                DisplayLectures(CurrentTeacher.Id);
+                DisplayLectures(CurrentTeacher.Id, LecturesList, LecturesIdList);
             }
         }
 
@@ -225,17 +309,163 @@ namespace Do_platform
         {
             if (AddLectureTextBox.Text != "")
             {
-                ApplicatonContext.AddLecture(new Lecture()
+                Lecture NewLecture = new Lecture()
                 {
                     Name = AddLectureTextBox.Text.Trim(),
                     Teacher_id = CurrentTeacher.Id
-                });
-                if (ApplicatonContext.GetLectures()[ApplicatonContext.GetLectures().Count - 1].Name == AddLectureTextBox.Text)
+                };
+                LecturesIdList.Add(NewLecture);
+                ApplicatonContext.AddLecture(NewLecture, CurrentTeacher.Id);
+                if (ApplicatonContext.IsAddedLecture)
                 {
-                    LecturesList.Items.Add(ApplicatonContext.GetLectures()[ApplicatonContext.GetLectures().Count - 1].Name);
+                    LecturesList.Items.Add(ApplicatonContext.GetLectures(CurrentTeacher.Id)[ApplicatonContext.GetLectures(CurrentTeacher.Id).Count - 1].Name);
                 }
-
             }
+        }
+
+        private void EditLecture_Click(object sender, RoutedEventArgs e)
+        {
+            Lecture SelectedLecture = ApplicatonContext.GetLectures(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            lectures.Visibility = Visibility.Hidden;
+            EditLecturePage.Visibility = Visibility;
+            EditLectureName.Text = LecturesList.SelectedItem.ToString();
+            EditLectureTheme.Text = SelectedLecture.Theme;
+            EditLectureBody.Text = SelectedLecture.Lecture_body;
+
+        }
+
+        private void EditLectureSave_Click(object sender, RoutedEventArgs e)
+        {
+            Lecture SelectedLecture = LecturesIdList.Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            ApplicatonContext.EditLecture(SelectedLecture.Id, new Lecture() 
+            { 
+                Name = EditLectureName.Text,
+                Theme = EditLectureTheme.Text,
+                Lecture_body = EditLectureBody.Text,
+                Teacher_id = SelectedLecture.Teacher_id
+            });
+            EditLecturePage.Visibility = Visibility.Hidden;
+            lectures.Visibility = Visibility;
+        }
+
+        private void LectureToCourseAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Lecture SelectedLecture = LecturesIdList.Find(item => item.Name == LecturesToCourseBox.SelectedItem.ToString());
+            Course SelectedCourse = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
+            
+            ApplicatonContext.EditCourse(new Lecture_to_Course()
+            {
+                Lecture_id = SelectedLecture.Id,
+                Course_id = SelectedCourse.Id
+            });
+            LecturesToCourseList.Items.Add(LecturesToCourseBox.SelectedItem);
+            LecturesToCourseBox.Items.Remove(LecturesToCourseBox.SelectedItem);
+        }
+
+        private void couresReturn_Click(object sender, RoutedEventArgs e)
+        {
+            courses.Visibility = Visibility.Hidden;
+            TeacherProfile.Visibility = Visibility;
+        }
+
+        private void lecturesReturn_Click(object sender, RoutedEventArgs e)
+        {
+            lectures.Visibility = Visibility.Hidden;
+            TeacherProfile.Visibility = Visibility;
+        }
+
+        private void editLecturesReturn_Click(object sender, RoutedEventArgs e)
+        {
+            EditLecturePage.Visibility = Visibility.Hidden;
+            lectures.Visibility = Visibility;
+        }
+
+        private void editCoursesReturn_Click(object sender, RoutedEventArgs e)
+        {
+            EditCoursePage.Visibility = Visibility.Hidden;
+            courses.Visibility = Visibility;
+        }
+
+        private void AddStudentsReturn_Click(object sender, RoutedEventArgs e)
+        {
+            AddStudentPage.Visibility = Visibility.Hidden;
+            students.Visibility = Visibility;
+        }
+        private void StudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            TeacherProfile.Visibility = Visibility.Hidden;
+            students.Visibility = Visibility;
+            DisplayStudents();
+        }
+
+        private void studentsReturn_Click(object sender, RoutedEventArgs e)
+        {
+            students.Visibility = Visibility.Hidden;
+            TeacherProfile.Visibility = Visibility;
+        }
+        private void EditStudent_Click(object sender, RoutedEventArgs e)
+        {
+            Student i = StudentsIdList.Find(item => item.Name == studentsList.SelectedItem.ToString());
+            List<Student_to_Course> sc = ApplicatonContext.GetStudentsToCourses(i.Id);
+            students.Visibility = Visibility.Hidden;
+            AddStudentPage.Visibility = Visibility;
+            StudentsToCourseList.Items.Clear();
+            StudentsToCourseBox.Items.Clear();
+            foreach (Student_to_Course s in ApplicatonContext.GetStudentsToCourses(i.Id))
+            {
+                StudentsToCourseList.Items.Add(ApplicatonContext.GetCourses(CurrentTeacher.Id).Find(i => i.Id == s.Course_id).Name);
+            }
+            //DisplayLectureToCourse(CurrentTeacher.Id, LecturesToCourseBox, LecturesIdList, i.Id);
+            DisplayStudentToCourse(CurrentTeacher.Id, StudentsToCourseBox, CoursesIdList, i.Id);
+        }
+
+        private void StudentToCourseAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Student SelectedStudent = StudentsIdList.Find(i => i.Name == studentsList.SelectedItem.ToString());
+            Course SelectedCourse = CoursesIdList.Find(item => item.Name == StudentsToCourseBox.SelectedItem.ToString());
+            ApplicatonContext.AddStudentToCourse(new Student_to_Course()
+            {
+                Student_id = SelectedStudent.Id,
+                Course_id = SelectedCourse.Id
+            });
+            StudentsToCourseList.Items.Add(StudentsToCourseBox.SelectedItem);
+            StudentsToCourseBox.Items.Remove(StudentsToCourseBox.SelectedItem);
+        }
+
+        private void StudentCourseButton_Click(object sender, RoutedEventArgs e)
+        {
+            StudentProfile.Visibility = Visibility.Hidden;
+            StudentCourse.Visibility = Visibility;
+            DisplayStudentToCourseForStudent(StudentCoursesList, CoursesIdList, CurrentStudent.Id);
+        }
+
+        private void StudentLectureButton_Click(object sender, RoutedEventArgs e)
+        {
+            StudentProfile.Visibility = Visibility.Hidden;
+            StudentCourse.Visibility = Visibility;
+            DisplayAllStudentLectures(StudentCoursesList, LecturesIdList, CurrentStudent.Id);
+        }    
+
+        private void StudentCourseReturn_Click(object sender, RoutedEventArgs e)
+        {
+            StudentCourse.Visibility = Visibility.Hidden;
+            StudentProfile.Visibility = Visibility;
+        }
+
+        private void OpenCourse_Click(object sender, RoutedEventArgs e)
+        {
+            StudentCourse.Visibility = Visibility.Hidden;
+            Lecture lecture = LecturesIdList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
+            studentLectureName.Text = lecture.Name;
+            studentLectureTheme.Text = lecture.Theme;
+            studentLectureBody.Text = lecture.Lecture_body;
+            studentLecture.Visibility = Visibility;
+        }
+
+        private void studentLectureReturn_Click(object sender, RoutedEventArgs e)
+        {
+            studentLecture.Visibility = Visibility.Hidden;
+            StudentCourse.Visibility = Visibility;
         }
 
         private void loginBox_LostFocus(object sender, RoutedEventArgs e)
