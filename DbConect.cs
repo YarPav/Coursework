@@ -18,7 +18,6 @@ namespace Do_platform
     public ApplicatonContext()
         {
             Database.EnsureCreated();
-
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -70,13 +69,23 @@ namespace Do_platform
                 return l;
             }
         }
-        public static List<Lecture> GetLectureToCourse(int teacherId, int courseId)
+        public static List<Lecture> GetLectureToCourse(int courseId)
         {
             using (ApplicatonContext db = new ApplicatonContext())
             {
                 List<Lecture> l = new List<Lecture>();
                 
-                l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE Teacher_id = {teacherId} AND id NOT IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId})").ToList();
+                l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE id NOT IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId})").ToList();
+                return l;
+            }
+        }
+        public static List<Lecture> GetLecturesFromCourse(int courseId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Lecture> l = new List<Lecture>();
+
+                l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE id IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId})").ToList();
                 return l;
             }
         }
@@ -182,6 +191,20 @@ namespace Do_platform
                 db.SaveChanges();
             }
         }
+        public static void EditStudent(int id, Student _s)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var s = db.student.Single(i => i.Id == id);
+                s.Name = _s.Name;
+                s.Lastname = _s.Lastname;
+                s.Login = _s.Login;
+                s.Password = _s.Password;
+                s.Course_id = _s.Course_id;
+                db.SaveChanges();
+            }
+        }
     }
-
 }
+
+
