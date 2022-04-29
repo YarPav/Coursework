@@ -9,13 +9,20 @@ namespace Do_platform
     {
         public static bool IsAddedCourse = false;
         public static bool IsAddedLecture = false;
+        public static bool IsAddedTest = false;
+        public static bool IsAddedTestQuestion = false;
+        public static bool IsAddedTestAnswer = false;
         public DbSet<Teacher> teacher { get; set; }
         public DbSet<Student> student { get; set; }
+        public DbSet<Student_to_Course> student_to_course { get; set; }
         public DbSet<Course> course { get; set; }
         public DbSet<Lecture> lecture { get; set; }
         public DbSet<Lecture_to_Course> lecture_to_course { get; set; }
-        public DbSet<Student_to_Course> student_to_course { get; set; }
-    public ApplicatonContext()
+        public DbSet<Test> test { get; set; }
+        public DbSet<Test_Question> test_question { get; set; }
+        public DbSet<Test_Answer> test_answer { get; set; }
+        public DbSet<Test_to_Course> test_to_course { get; set; }
+        public ApplicatonContext()
         {
             Database.EnsureCreated();
         }
@@ -60,6 +67,33 @@ namespace Do_platform
                 return l;
             }
         }
+        public static List<Test> GetTests(int teacherId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test> t = new List<Test>();
+                t = db.test.Where(test => test.Teacher_id == teacherId).ToList();
+                return t;
+            }
+        }
+        public static List<Test_Question> GetTestQuestions(int testId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test_Question> t = new List<Test_Question>();
+                t = db.test_question.Where(test => test.Test_id == testId).ToList();
+                return t;
+            }
+        }
+        public static List<Test_Answer> GetTestAnswers(int questionId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test_Answer> t = new List<Test_Answer>();
+                t = db.test_answer.Where(test => test.Question_id == questionId).ToList();
+                return t;
+            }
+        }
         public static List<Lecture_to_Course> GetLecturesToCourses(int courseId)
         {
             using (ApplicatonContext db = new ApplicatonContext())
@@ -69,13 +103,22 @@ namespace Do_platform
                 return l;
             }
         }
+        public static List<Test_to_Course> GetTestsToCourses(int courseId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test_to_Course> t = new List<Test_to_Course>();
+                t = db.test_to_course.Where(test => test.Course_id == courseId).ToList();
+                return t;
+            }
+        }
         public static List<Lecture> GetLectureToCourse(int courseId)
         {
             using (ApplicatonContext db = new ApplicatonContext())
             {
                 List<Lecture> l = new List<Lecture>();
                 
-                l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE id NOT IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId})").ToList();
+                l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE id NOT IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId}) AND Teacher_id = (SELECT Teacher_id FROM course WHERE Id = {courseId})").ToList();
                 return l;
             }
         }
@@ -87,6 +130,24 @@ namespace Do_platform
 
                 l = db.lecture.FromSqlInterpolated($"SELECT * FROM `lecture` WHERE id IN (SELECT Lecture_id FROM lecture_to_course WHERE course_id = {courseId})").ToList();
                 return l;
+            }
+        }
+        public static List<Test> GetTestToCourse(int courseId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test> t = new List<Test>();
+                t = db.test.FromSqlInterpolated($"SELECT * FROM `test` WHERE id NOT IN (SELECT test_id FROM test_to_course WHERE course_id = {courseId}) AND Teacher_id = (SELECT Teacher_id FROM course WHERE Id = {courseId});").ToList();
+                return t;
+            }
+        }
+        public static List<Test> GetTestToCourseInclude(int courseId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test> t = new List<Test>();
+                t = db.test.FromSqlInterpolated($"SELECT * FROM `test` WHERE id IN (SELECT test_id FROM test_to_course WHERE course_id = {courseId});").ToList();
+                return t;
             }
         }
         public static List<Student_to_Course> GetStudentsToCourses(int studentId)
@@ -141,6 +202,7 @@ namespace Do_platform
             
             using (ApplicatonContext db = new ApplicatonContext())
             {
+                IsAddedCourse = false;
                 Course i = GetCourses(currentTeacher).Find(item => item.Name == _c.Name);
                 if (i == null)
                 {
@@ -150,11 +212,100 @@ namespace Do_platform
                 }     
             }
         }
-        public static void EditCourse(Lecture_to_Course _l_to_c)
+        public static void RemoveCourse(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var c = db.course.Single(i => i.Id == id);
+                db.course.Remove(c);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveLecture(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var l = db.lecture.Single(i => i.Id == id);
+                db.lecture.Remove(l);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveTest(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test.Single(i => i.Id == id);
+                db.test.Remove(t);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveTestQuestion(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test_question.Single(i => i.Id == id);
+                db.test_question.Remove(t);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveTestAnswer(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test_answer.Single(i => i.Id == id);
+                db.test_answer.Remove(t);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveLectureToCourse(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var l = db.lecture_to_course.Single(i => i.Id == id);
+                db.lecture_to_course.Remove(l);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveTestToCourse(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test_to_course.Single(i => i.Id == id);
+                db.test_to_course.Remove(t);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveStudent(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var s = db.student.Single(i => i.Id == id);
+                db.student.Remove(s);
+                db.SaveChanges();
+            }
+        }
+        public static void RemoveStudentToCourse(int id)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var s = db.student_to_course.Single(i => i.Id == id);
+                db.student_to_course.Remove(s);
+                db.SaveChanges();
+            }
+        }
+        public static void EditLectureToCourse(Lecture_to_Course _l_to_c)
         {
             using (ApplicatonContext db = new ApplicatonContext())
             {
                 db.lecture_to_course.Add(_l_to_c);
+                db.SaveChanges();
+            }
+        }
+        public static void EditTestToCourse(Test_to_Course _t_to_c)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                db.test_to_course.Add(_t_to_c);
                 db.SaveChanges();
             }
         }
@@ -170,12 +321,55 @@ namespace Do_platform
         {
             using (ApplicatonContext db = new ApplicatonContext())
             {
+                IsAddedLecture = false;
                 Lecture i = GetLectures(currentteacher).Find(item => item.Name == _l.Name);
                 if (i == null)
                 {
                     db.lecture.Add(_l);
                     db.SaveChanges();
                     IsAddedLecture = true;
+                }
+            }
+        }
+        public static void AddTest(Test _t, int currentteacher)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                IsAddedTest = false;
+                Test i = GetTests(currentteacher).Find(item => item.Name == _t.Name);
+                if (i == null)
+                {
+                    db.test.Add(_t);
+                    db.SaveChanges();
+                    IsAddedTest = true;
+                }
+            }
+        }
+        public static void AddTestQuestion(Test_Question _t, int currentTest)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                IsAddedTestQuestion = false;
+                Test_Question i = GetTestQuestions(currentTest).Find(item => item.Question_body == _t.Question_body);
+                if (i == null)
+                {
+                    db.test_question.Add(_t);
+                    db.SaveChanges();
+                    IsAddedTestQuestion = true;
+                }
+            }
+        }
+        public static void AddTestAnswer(Test_Answer _t, int currentQuestion)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                IsAddedTestAnswer = false;
+                Test_Answer i = GetTestAnswers(currentQuestion).Find(item => item.Answer_body == _t.Answer_body);
+                if (i == null)
+                {
+                    db.test_answer.Add(_t);
+                    db.SaveChanges();
+                    IsAddedTestAnswer = true;
                 }
             }
         }
@@ -188,6 +382,38 @@ namespace Do_platform
                 l.Theme = _l.Theme;
                 l.Lecture_body = _l.Lecture_body;
                 l.Teacher_id = _l.Teacher_id;
+                db.SaveChanges();
+            }
+        }
+        public static void EditTest(int id, Test _t)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var l = db.test.Single(i => i.Id == id);
+                l.Name = _t.Name;
+                l.Theme = _t.Theme;
+                l.Teacher_id = _t.Teacher_id;
+                db.SaveChanges();
+            }
+        }
+        public static void EditTestQuestion(int id, Test_Question _t)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test_question.Single(i => i.Id == id);
+                t.Question_body = _t.Question_body;
+                t.Test_id = _t.Test_id;
+                db.SaveChanges();
+            }
+        }
+        public static void EditTestAnswer(int id, Test_Answer _t)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                var t = db.test_answer.Single(i => i.Id == id);
+                t.Answer_body = _t.Answer_body;
+                t.is_true_answer = _t.is_true_answer;
+                t.Question_id = _t.Question_id;
                 db.SaveChanges();
             }
         }
