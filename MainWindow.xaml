@@ -68,7 +68,7 @@
             </Grid.ColumnDefinitions>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Курсы" Grid.Column="1" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentCoursesButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Лекции" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentLectureButton_Click"></Button>
-            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Тесты" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Тесты" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentTestButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Оценки" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand"></Button>
             <Button Foreground="AliceBlue" Background="Orange" x:Name="studentName" Grid.Column="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20px" Click="studentName_Click"></Button>
         </Grid>
@@ -141,7 +141,7 @@
                 <TextBlock Foreground="AliceBlue" >Лекции</TextBlock>
             </ListBox>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Открыть" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Padding="30 0" x:Name="openLectureFromCourse" Click="openLectureFromCourse_Click"></Button>
-            <ListBox Foreground="AliceBlue" Background="CadetBlue" Grid.Row="5" Grid.Column="1">
+            <ListBox Foreground="AliceBlue" Background="CadetBlue" Grid.Row="5" Grid.Column="1" x:Name="studentCourseTestsList">
                 <TextBlock Foreground="AliceBlue" >Тесты</TextBlock>
             </ListBox>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Открыть" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" Padding="30 0" x:Name="openTestFromCourse" Click="openTestFromCourse_Click"></Button>
@@ -341,6 +341,25 @@
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Открыть" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="OpenCourse_Click" x:Name="OpenCourse"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="StudentCourseReturn" Click="StudentCoursesReturn_Click"></Button>
         </Grid>
+        <Grid Background="DarkSlateGray" x:Name="StudentTests" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ListBox Foreground="AliceBlue" Background="CadetBlue"  x:Name="StudentTestsList" Grid.Row="1" Grid.Column="2" Margin="0 20px">
+                <TextBlock Foreground="AliceBlue"  FontSize="18px" FontWeight="bold">Курсы</TextBlock>
+            </ListBox>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Открыть" FontSize="16px" Grid.Column="2" Grid.Row="2" Click="OpenTest_Click"  x:Name="OpenTest"></Button>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Назад" Grid.Column="3" HorizontalAlignment="Center" Padding="25 0" x:Name="StudentTestReturn" Click="StudentTestReturn_Click"></Button>
+        </Grid>
         <Grid Background="DarkSlateGray" x:Name="testAnswersEdit" Visibility="Hidden"> 
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
@@ -392,6 +411,26 @@
             <CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="0 10" x:Name="testAnswerEditCheckBox"></CheckBox>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Сохранить" FontSize="16px" Grid.Column="1" Grid.Row="6" Click="EditTestAnswerSave_Click"  x:Name="EditTestAnswerSave" Margin="0 0 10 0"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Назад" Grid.Column="2" HorizontalAlignment="Center" Padding="25 0" x:Name="TestAnswerEditReturn" Click="TestAnswerEditReturn_Click"></Button>
+        </Grid>
+        <Grid x:Name="test" Background="DarkSlateGray" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.3*"></RowDefinition>
+                <RowDefinition Height="0.5*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+                <ColumnDefinition Width="0.8*"></ColumnDefinition>
+                <ColumnDefinition Width="0.33*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue" Content="Закончить" Grid.Column="2" HorizontalAlignment="Center" Padding="25 0" x:Name="testExit" Click="testExit_Click"></Button>
+            <TextBox x:Name="testQuestionBox" Grid.Row="1" Grid.Column="1" IsReadOnly="True" BorderBrush="DarkSlateGray" Background="DarkSlateGray" Foreground="AliceBlue" FontSize="16" TextWrapping="WrapWithOverflow">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</TextBox>
+            <StackPanel Grid.Row="2" Grid.Column="1" x:Name="testAnsersContainer">
+               
+            </StackPanel>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue" Content="Ответить" Grid.Row="3" Grid.Column="1" FontSize="20px" Padding="25 0" x:Name="testAnserButton" Click="testAnserButton_Click"></Button>
         </Grid>
     </Grid>
 

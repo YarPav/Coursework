@@ -248,6 +248,66 @@ namespace Do_platform
                 }
             }
         }
+        public void DisplayAllStudentTests(dynamic name, int currentStudentId)
+        {
+            name.Items.Clear();
+            foreach (Test t in ApplicatonContext.GetAllStudentTests(currentStudentId))
+            {
+                name.Items.Add(t.Name);
+            }
+        }
+
+        public void renderTestQuestion(int testId, int questionId)
+        {
+            List<Test_Question> testQuestions = ApplicatonContext.GetTestQuestions(testId);
+            if (testQuestions.Count == 0)
+            {
+                testQuestionBox.Text = "В этом тесте пока нет вопросов :)";
+                testAnsersContainer.Children.Clear();
+                testAnserButton.IsEnabled = false;
+                testAnserButton.Foreground = Brushes.LightGray;
+            } else
+            {
+                testAnsersContainer.Children.Clear();
+                testAnserButton.IsEnabled = true;
+                testAnserButton.Foreground = Brushes.AliceBlue;
+                testQuestionBox.Text = testQuestions[questionId].Question_body;
+                if (ApplicatonContext.GetTestAnswers(testQuestions[questionId].Id).Count == 0)
+                {
+                    return;
+                    TextBlock tb = new TextBlock();
+                    tb.Text = "Ответов пока нет. Вам будет добавлен балл за правильный ответ.";
+                    testAnsersContainer.Children.Add(tb);
+                } else
+                {
+                    int TrueAnswerCount = 0;              
+                    foreach (Test_Answer ans in ApplicatonContext.GetTestAnswers(testQuestions[questionId].Id))
+                    {
+                        if (ans.is_true_answer)
+                        {
+                            TrueAnswerCount++;
+                        }
+                    }
+                    foreach (Test_Answer ans in ApplicatonContext.GetTestAnswers(testQuestions[questionId].Id))
+                    {
+                        if (TrueAnswerCount > 1)
+                        {
+                            CheckBox cb = new CheckBox();
+                            cb.Content = ans.Answer_body;
+                            cb.IsChecked = ans.is_true_answer;
+                            testAnsersContainer.Children.Add(cb);
+                        } else
+                        {
+                            RadioButton rb = new RadioButton();
+                            rb.Content = ans.Answer_body;
+                            rb.IsChecked = ans.is_true_answer;
+                            testAnsersContainer.Children.Add(rb);
+                        }
+                        
+                    }
+                }
+            }
+        }
 
         public bool isLogined = false,
             isNewUser = true;
@@ -625,7 +685,25 @@ namespace Do_platform
             StudentProfile.Visibility = Visibility.Hidden;
             StudentCourses.Visibility = Visibility;
             DisplayAllStudentLectures(StudentCoursesList, LecturesIdList, CurrentStudent.Id);
-        }    
+        }
+
+        private void StudentTestButton_Click(object sender, RoutedEventArgs e)
+        {
+            StudentProfile.Visibility = Visibility.Hidden;
+            StudentTests.Visibility = Visibility;
+            DisplayAllStudentTests(StudentTestsList, CurrentStudent.Id);
+        }
+
+        private void StudentTestReturn_Click(object sender, RoutedEventArgs e)
+        {
+            StudentTests.Visibility = Visibility.Hidden;
+            StudentProfile.Visibility = Visibility;
+        }
+
+        private void OpenTest_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void StudentCoursesReturn_Click(object sender, RoutedEventArgs e)
         {
@@ -651,9 +729,15 @@ namespace Do_platform
             } else
             {
                 studentCourseLecturesList.Items.Clear();
+                studentCourseTestsList.Items.Clear();
                 studentCourse.Visibility = Visibility;
-                Course i = CoursesIdList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
+                List <Course> coursesList = ApplicatonContext.GetStudentToCourseForStudent(CurrentStudent.Id);
+                Course i = coursesList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
                 DisplayLecturesFromCourse(studentCourseLecturesList, LecturesIdList, i.Id);
+                foreach (Test t in ApplicatonContext.GetTestToCourseInclude(i.Id))
+                {
+                    studentCourseTestsList.Items.Add(t.Name);
+                }
             }
             
         }
@@ -693,9 +777,66 @@ namespace Do_platform
             studentLecture.Visibility = Visibility;
         }
 
+        private int currentQuesionIndex = 0;
+        private int trueAnswersCounter = 0;
         private void openTestFromCourse_Click(object sender, RoutedEventArgs e)
         {
+            currentQuesionIndex = 0;
+            trueAnswersCounter = 0;
+            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
+            studentCourse.Visibility = Visibility.Hidden;
+            test.Visibility = Visibility;
+            renderTestQuestion(currentTest.Id, currentQuesionIndex);
+        }
+        private void testExit_Click(object sender, RoutedEventArgs e)
+        {
+            test.Visibility = Visibility.Hidden;
+            studentCourse.Visibility = Visibility;
+        }
 
+        private void testAnserButton_Click(object sender, RoutedEventArgs e)
+        {
+            var allButtons = testAnsersContainer.Children.OfType<dynamic>().ToList();
+            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
+            List <Test_Answer> answers = ApplicatonContext.GetTestAnswers(ApplicatonContext.GetTestQuestions(currentTest.Id)[currentQuesionIndex].Id).FindAll(i => i.is_true_answer);
+            List <dynamic> selectedAnswers = allButtons.FindAll(i => i.IsChecked);
+            if (selectedAnswers == null && allButtons.Count > 0)
+            {
+                return;
+            }
+            if (answers == null)
+            {
+                trueAnswersCounter++;
+            } else
+            {
+                //testAnserButton.Content = selectedAnswers[0].Content;
+                //for (int i = 0; i < answers.Count; i++)
+                foreach(dynamic ans in answers)
+                {
+                    //if (answers.Find(item => selectedAns))
+                    //if (selectedAnswers[0].Content == ans.Answer_body) testAnserButton.Content = "!!!";
+                    if (selectedAnswers.FindIndex(item => (item.Content.ToString() == ans.Answer_body)) != -1)
+                    {
+                        trueAnswersCounter++;
+                    } else
+                    {
+                        if (selectedAnswers.Count > 1)
+                        {
+                            trueAnswersCounter -= 1;
+                        }
+                    }
+                }
+                
+            }
+            
+            currentQuesionIndex++;
+            if (currentQuesionIndex == ApplicatonContext.GetTestQuestions(currentTest.Id).Count)
+            {
+                testQuestionBox.Text = trueAnswersCounter.ToString();
+            } else
+            {
+                renderTestQuestion(currentTest.Id, currentQuesionIndex);
+            }
         }
 
         private void studentName_Click(object sender, RoutedEventArgs e)
@@ -1045,6 +1186,8 @@ namespace Do_platform
             TestsToCourseBox.Items.Add(TestsToCourseList.SelectedItem);
             TestsToCourseList.Items.Remove(TestsToCourseList.SelectedItem);
         }
+
+        
 
         private void loginBox_LostFocus(object sender, RoutedEventArgs e)
         {

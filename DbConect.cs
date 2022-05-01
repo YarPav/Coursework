@@ -189,6 +189,16 @@ namespace Do_platform
                 return c;
             }
         }
+        public static List<Test> GetAllStudentTests(int studentId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Test> t = new List<Test>();
+
+                t = db.test.FromSqlInterpolated($"SELECT * FROM `test` WHERE Id IN (SELECT test_id FROM test_to_course WHERE course_id IN (SELECT course_id FROM student_to_course WHERE student_id = {studentId}))").ToList();
+                return t;
+            }
+        }
         public static void AddStudent(Student _s)
         {
             using (ApplicatonContext db = new ApplicatonContext())
