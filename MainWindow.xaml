@@ -426,10 +426,11 @@
                 <ColumnDefinition Width="0.33*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Button Background="CornflowerBlue" Foreground="AliceBlue" Content="Закончить" Grid.Column="2" HorizontalAlignment="Center" Padding="25 0" x:Name="testExit" Click="testExit_Click"></Button>
-            <TextBox x:Name="testQuestionBox" Grid.Row="1" Grid.Column="1" IsReadOnly="True" BorderBrush="DarkSlateGray" Background="DarkSlateGray" Foreground="AliceBlue" FontSize="16" TextWrapping="WrapWithOverflow">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</TextBox>
+            <TextBox x:Name="testQuestionBox" Grid.Row="1" Grid.Column="1" IsReadOnly="True" BorderBrush="DarkSlateGray" Background="DarkSlateGray" Foreground="AliceBlue" FontSize="16" TextWrapping="WrapWithOverflow"></TextBox>
             <StackPanel Grid.Row="2" Grid.Column="1" x:Name="testAnsersContainer">
                
             </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="14" Foreground="AliceBlue" x:Name="testAbsenceAnswers" Visibility="Hidden">Ответов пока нет. Вам будет добавлен балл за правильный ответ.</TextBlock>
             <Button Background="CornflowerBlue" Foreground="AliceBlue" Content="Ответить" Grid.Row="3" Grid.Column="1" FontSize="20px" Padding="25 0" x:Name="testAnserButton" Click="testAnserButton_Click"></Button>
         </Grid>
     </Grid>

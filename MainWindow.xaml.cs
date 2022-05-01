@@ -106,6 +106,7 @@ namespace Do_platform
         private List<Student> StudentsIdList = new List<Student>();
         private bool isStudentCoursesDisplay = true;
         private bool isLectureDisplayFromCourse = false;
+        private bool isTestOpenFromCourse = true;
 
         public void DisplayStudentProfile (Student i)
         {
@@ -274,12 +275,13 @@ namespace Do_platform
                 testQuestionBox.Text = testQuestions[questionId].Question_body;
                 if (ApplicatonContext.GetTestAnswers(testQuestions[questionId].Id).Count == 0)
                 {
+                    testAbsenceAnswers.Visibility = Visibility;
+                    testAnsersContainer.Visibility = Visibility.Hidden;
                     return;
-                    TextBlock tb = new TextBlock();
-                    tb.Text = "Ответов пока нет. Вам будет добавлен балл за правильный ответ.";
-                    testAnsersContainer.Children.Add(tb);
                 } else
                 {
+                    testAnsersContainer.Visibility = Visibility;
+                    testAbsenceAnswers.Visibility = Visibility.Hidden;
                     int TrueAnswerCount = 0;              
                     foreach (Test_Answer ans in ApplicatonContext.GetTestAnswers(testQuestions[questionId].Id))
                     {
@@ -702,7 +704,13 @@ namespace Do_platform
 
         private void OpenTest_Click(object sender, RoutedEventArgs e)
         {
-
+            isTestOpenFromCourse = false;
+            currentQuesionIndex = 0;
+            trueAnswersCounter = 0;
+            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == StudentTestsList.SelectedItem.ToString());
+            StudentTests.Visibility = Visibility.Hidden;
+            test.Visibility = Visibility;
+            renderTestQuestion(currentTest.Id, currentQuesionIndex);
         }
 
         private void StudentCoursesReturn_Click(object sender, RoutedEventArgs e)
@@ -781,61 +789,87 @@ namespace Do_platform
         private int trueAnswersCounter = 0;
         private void openTestFromCourse_Click(object sender, RoutedEventArgs e)
         {
+            isTestOpenFromCourse = true;
+            studentCourse.Visibility = Visibility.Hidden;
             currentQuesionIndex = 0;
             trueAnswersCounter = 0;
             Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
-            studentCourse.Visibility = Visibility.Hidden;
+            
             test.Visibility = Visibility;
             renderTestQuestion(currentTest.Id, currentQuesionIndex);
         }
         private void testExit_Click(object sender, RoutedEventArgs e)
         {
+            if (isTestOpenFromCourse)
+            {
+                studentCourse.Visibility = Visibility;
+                
+            } else
+            {
+                StudentTests.Visibility = Visibility;
+            }
             test.Visibility = Visibility.Hidden;
-            studentCourse.Visibility = Visibility;
         }
 
-        private void testAnserButton_Click(object sender, RoutedEventArgs e)
+        private void renderTest(ListBox name)
         {
+            bool isAnswerTrue = false;
             var allButtons = testAnsersContainer.Children.OfType<dynamic>().ToList();
-            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
-            List <Test_Answer> answers = ApplicatonContext.GetTestAnswers(ApplicatonContext.GetTestQuestions(currentTest.Id)[currentQuesionIndex].Id).FindAll(i => i.is_true_answer);
-            List <dynamic> selectedAnswers = allButtons.FindAll(i => i.IsChecked);
+            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == name.SelectedItem.ToString());
+            List<Test_Answer> answers = ApplicatonContext.GetTestAnswers(ApplicatonContext.GetTestQuestions(currentTest.Id)[currentQuesionIndex].Id);
+            List<dynamic> selectedAnswers = allButtons.FindAll(i => i.IsChecked);
             if (selectedAnswers == null && allButtons.Count > 0)
             {
                 return;
             }
-            if (answers == null)
+            if (allButtons.Count == 0)
             {
                 trueAnswersCounter++;
-            } else
+            }
+            else
             {
-                //testAnserButton.Content = selectedAnswers[0].Content;
-                //for (int i = 0; i < answers.Count; i++)
-                foreach(dynamic ans in answers)
+                for (int i = 0; i < answers.Count; i++)
                 {
-                    //if (answers.Find(item => selectedAns))
-                    //if (selectedAnswers[0].Content == ans.Answer_body) testAnserButton.Content = "!!!";
-                    if (selectedAnswers.FindIndex(item => (item.Content.ToString() == ans.Answer_body)) != -1)
+                    if (answers[i].is_true_answer == allButtons[i].IsChecked)
                     {
-                        trueAnswersCounter++;
-                    } else
+                        isAnswerTrue = true;
+                    }
+                    else
                     {
-                        if (selectedAnswers.Count > 1)
-                        {
-                            trueAnswersCounter -= 1;
-                        }
+                        isAnswerTrue = false;
+                        break;
                     }
                 }
-                
+                if (isAnswerTrue)
+                {
+                    trueAnswersCounter++;
+                }
+
+                if (isAnswerTrue && allButtons[0] is System.Windows.Controls.CheckBox)
+                {
+                    trueAnswersCounter++;
+                }
             }
-            
+
             currentQuesionIndex++;
             if (currentQuesionIndex == ApplicatonContext.GetTestQuestions(currentTest.Id).Count)
             {
                 testQuestionBox.Text = trueAnswersCounter.ToString();
-            } else
+            }
+            else
             {
                 renderTestQuestion(currentTest.Id, currentQuesionIndex);
+            }
+        }
+
+        private void testAnserButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (isTestOpenFromCourse)
+            {
+                renderTest(studentCourseTestsList);
+            } else
+            {
+                renderTest(StudentTestsList);
             }
         }
 
