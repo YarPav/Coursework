@@ -22,6 +22,7 @@ namespace Do_platform
         public DbSet<Test_Question> test_question { get; set; }
         public DbSet<Test_Answer> test_answer { get; set; }
         public DbSet<Test_to_Course> test_to_course { get; set; }
+        public DbSet<Estimation> estimation { get; set;  }
         public ApplicatonContext()
         {
             Database.EnsureCreated();
@@ -197,6 +198,46 @@ namespace Do_platform
 
                 t = db.test.FromSqlInterpolated($"SELECT * FROM `test` WHERE Id IN (SELECT test_id FROM test_to_course WHERE course_id IN (SELECT course_id FROM student_to_course WHERE student_id = {studentId}))").ToList();
                 return t;
+            }
+        }
+        public static List<Estimation> GetEstimationsForStudent(int studentId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Estimation> e = new List<Estimation>();
+                e = db.estimation.FromSqlInterpolated($"SELECT * FROM `estimation` WHERE student_id = {studentId}").ToList();
+                return e;
+            }
+        }
+        public static List<Estimation> GetEstimationsForTeacher(int teacherId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                List<Estimation> e = new List<Estimation>();
+                e = db.estimation.FromSqlInterpolated($"SELECT * FROM `estimation` WHERE test_id IN (SELECT id FROM test WHERE teacher_id = {teacherId})").ToList();
+                return e;
+            }
+        }
+        public static Test GetTest(int testId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                return (Test)db.test.First(test => test.Id == testId);
+            }
+        }
+        public static Student GetStudent(int studentId)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                return (Student)db.student.Where(student => student.Id == studentId);
+            }
+        }
+        public static void AddEstimation(Estimation _e)
+        {
+            using (ApplicatonContext db = new ApplicatonContext())
+            {
+                db.estimation.Add(_e);
+                db.SaveChanges();
             }
         }
         public static void AddStudent(Student _s)

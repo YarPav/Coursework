@@ -24,10 +24,13 @@ namespace Do_platform
         public MainWindow()
         {
             InitializeComponent();
+            loginBox.Focus();
         }
         public Teacher CurrentTeacher;
         public Student CurrentStudent;
         public string CurrentUser;
+        private Course CurrnetCourse;
+        private Lecture CurrnetLecture;
         public class Teacher
         {
             public string role = "Teacher";
@@ -79,7 +82,6 @@ namespace Do_platform
             public int Id { get; set; }
             public string Name { get; set; }
             public string Theme { get; set; }
-            //public int test_time { get; set; }
             public int Teacher_id { get; set; }
         }
         public class Test_Question
@@ -101,9 +103,25 @@ namespace Do_platform
             public int Test_id { get; set; }
             public int Course_id { get; set; }
         }
-        private List<Course> CoursesIdList = new List<Course>();
+        public class Estimation
+        {
+            public int Id { get; set; }
+            public int Test_id { get; set; }
+            public int Student_id { get; set; }
+            public int Mark { get; set; }
+            public int Max_mark { get; set; }
+        }
+        public class EstimationToDisplay
+        {
+            public int Id { get; set; }
+            public string Test_Name { get; set; }
+            public string Student_Name { get; set; }
+            public int Mark { get; set; }
+            public int Max_mark { get; set; }
+            public string Teacher_id { get; set; }
+        }
+        //private List<Course> CoursesIdList = new List<Course>();
         private List<Lecture> LecturesIdList = new List<Lecture>();
-        private List<Student> StudentsIdList = new List<Student>();
         private bool isStudentCoursesDisplay = true;
         private bool isLectureDisplayFromCourse = false;
         private bool isTestOpenFromCourse = true;
@@ -121,29 +139,21 @@ namespace Do_platform
             TeacherProfile.Visibility = Visibility;
         }
 
-        public void DisplayCourses (int currentTeacherId, dynamic name, List<Course> list)
+        public void DisplayCourses (int currentTeacherId, dynamic name)
         {
             name.Items.Clear();
            foreach (Course i in ApplicatonContext.GetCourses(currentTeacherId))
             {
                 name.Items.Add(i.Name);
-                if (list != null)
-                {
-                    list.Add(i);
-                }
             }
         }
 
-        public void DisplayLectures(int currentTeacherId, dynamic name, List<Lecture> list)
+        public void DisplayLectures(int currentTeacherId, dynamic name)
         {
             name.Items.Clear();
             foreach (Lecture l in ApplicatonContext.GetLectures(currentTeacherId))
             {
                 name.Items.Add(l.Name);
-                if (list != null)
-                {
-                    list.Add(l);
-                }
             }
         }
         public void DisplayTests(int currentTeacherId, dynamic name)
@@ -170,28 +180,24 @@ namespace Do_platform
                 name.Items.Add(t.Answer_body);
             }
         }
-        public void DisplayLectureToCourse (dynamic name, List<Lecture> list, int currentCourseId)
+        public void DisplayLectureToCourse (dynamic name, int currentCourseId)
         {
             
             foreach (Lecture l in ApplicatonContext.GetLectureToCourse(currentCourseId))
             {
                 name.Items.Add(l.Name);
-                if (list != null)
-                {
-                    list.Add(l);
-                }
             }
         }
-        public void DisplayLecturesFromCourse(dynamic name, List<Lecture> list, int currentCourseId)
+        public void DisplayLecturesFromCourse(dynamic name, int currentCourseId)
         {
 
             foreach (Lecture l in ApplicatonContext.GetLecturesFromCourse(currentCourseId))
             {
-                name.Items.Add(l.Name);
-                if (list != null)
-                {
-                    list.Add(l);
-                }
+                TextBlock tb = new TextBlock();
+                tb.Text = l.Name;
+                tb.Uid = l.Id.ToString();
+                name.Items.Add(tb);
+                //name.Items.Add(l.Name);
             }
         }
         public void DisplayTestToCourse(dynamic name, int currentCourseId)
@@ -207,46 +213,42 @@ namespace Do_platform
             studentsList.Items.Clear();
             foreach (Student s in ApplicatonContext.GetStudents())
             {
-                studentsList.Items.Add(s.Name);
-                StudentsIdList.Add(s);
+                studentsList.Items.Add(s.Login);
             }
           
         }
 
-        public void DisplayStudentToCourse(int currentTeacherId, dynamic name, List<Course> list, int currentStudentId)
+        public void DisplayStudentToCourse(int currentTeacherId, dynamic name, int currentStudentId)
         {
             foreach (Course c in ApplicatonContext.GetStudentToCourse(currentTeacherId, currentStudentId))
             {
                 name.Items.Add(c.Name);
-                if (list != null)
-                {
-                    list.Add(c);
-                }
+                
             }
         }
 
-        public void DisplayStudentToCourseForStudent(dynamic name, List<Course> list, int currentStudentId)
+        public void DisplayStudentToCourseForStudent(dynamic name, int currentStudentId)
         {
             name.Items.Clear();
             foreach (Course c in ApplicatonContext.GetStudentToCourseForStudent(currentStudentId))
             {
-                name.Items.Add(c.Name);
-                if (list != null)
-                {
-                    list.Add(c);
-                }
+                TextBlock tb = new TextBlock();
+                tb.Text = c.Name;
+                tb.Uid = c.Id.ToString();
+                name.Items.Add(tb);
+                
             }
         }
-        public void DisplayAllStudentLectures(dynamic name, List<Lecture> list, int currentStudentId)
+        public void DisplayAllStudentLectures(dynamic name, int currentStudentId)
         {
             name.Items.Clear();
-            foreach (Lecture c in ApplicatonContext.GetAllStudentLectures(currentStudentId))
+            foreach (Lecture l in ApplicatonContext.GetAllStudentLectures(currentStudentId))
             {
-                name.Items.Add(c.Name);
-                if (list != null)
-                {
-                    list.Add(c);
-                }
+                TextBlock tb = new TextBlock();
+                tb.Text = l.Name;
+                tb.Uid = l.Id.ToString();
+                name.Items.Add(tb);
+                //name.Items.Add(c.Name);
             }
         }
         public void DisplayAllStudentTests(dynamic name, int currentStudentId)
@@ -254,7 +256,10 @@ namespace Do_platform
             name.Items.Clear();
             foreach (Test t in ApplicatonContext.GetAllStudentTests(currentStudentId))
             {
-                name.Items.Add(t.Name);
+                TextBlock tb = new TextBlock();
+                tb.Text = t.Name;
+                tb.Uid = t.Id.ToString();
+                name.Items.Add(tb);
             }
         }
 
@@ -350,7 +355,20 @@ namespace Do_platform
             }
         }
 
-        
+        public EstimationToDisplay EstimationTableFilling (Estimation est)
+        {
+            Teacher teacher = ApplicatonContext.GetTeachers().Find(t => t.Id == ApplicatonContext.GetTest(est.Test_id).Teacher_id);
+            Student student = ApplicatonContext.GetStudents().Find(i => i.Id == est.Student_id);
+            return new EstimationToDisplay()
+            {
+                Id = est.Id,
+                Student_Name = student.Name + " " + student.Lastname,
+                Test_Name = ApplicatonContext.GetTest(est.Test_id).Name,
+                Mark = est.Mark,
+                Max_mark = est.Max_mark,
+                Teacher_id = teacher.Name + " " + teacher.Lastname
+            };
+        }
 
         public void authorizationBtn(object sender, RoutedEventArgs e)
         {
@@ -359,11 +377,11 @@ namespace Do_platform
                 authorizationUsers();
                 if (isNewUser)
                 {
-                    autoText.Text = "new";
+                    //autoText.Text = "new";
                     ApplicatonContext.AddStudent(new Student()
                     {
                         Name = loginBox.Text,
-                        Lastname = loginBox.Text,
+                        Lastname = null,
                         Login = loginBox.Text,
                         Password = passwordBox.Password,
                         Course_id = null
@@ -386,11 +404,11 @@ namespace Do_platform
             courses.Visibility = Visibility;
             if (CurrentUser == "Student")
             {
-                DisplayCourses(CurrentStudent.Id, coursesList, CoursesIdList);
+                DisplayCourses(CurrentStudent.Id, coursesList);
                 
             } else
             {
-                DisplayCourses(CurrentTeacher.Id, coursesList, CoursesIdList);
+                DisplayCourses(CurrentTeacher.Id, coursesList);
             }
         }
 
@@ -432,7 +450,7 @@ namespace Do_platform
             {
                 LecturesToCourseList.Items.Add(l.Name);
             }
-            DisplayLectureToCourse(LecturesToCourseBox, LecturesIdList, i.Id);
+            DisplayLectureToCourse(LecturesToCourseBox, i.Id);
             foreach (Test t in ApplicatonContext.GetTestToCourseInclude(i.Id))
             {
                 TestsToCourseList.Items.Add(t.Name);
@@ -443,24 +461,24 @@ namespace Do_platform
         private void LectureButton_Click(object sender, RoutedEventArgs e)
         {
             AddLectureTextBox.Text = "";
+            /*addEssence.Click -= AddTestButton_Click;
             addEssence.Click += AddLecturesButton_Click;
-            addEssence.Click -= AddTestButton_Click;
-            removeEssence.Click += removeLecture_Click;
             removeEssence.Click -= removeTest_Click;
-            EditEssense.Click += EditLecture_Click;
+            removeEssence.Click += removeLecture_Click;
             EditEssense.Click -= EditTest_Click;
             EditLectureSave.Click += EditLectureSave_Click;
             EditLectureSave.Click -= EditTestSave_Click;
+            EditEssense.Click += EditLecture_Click;*/
             TeacherProfile.Visibility = Visibility.Hidden;
             lectures.Visibility = Visibility;
             if (CurrentUser == "Student")
             {
-                DisplayLectures(CurrentStudent.Id, LecturesList, LecturesIdList);
+                DisplayLectures(CurrentStudent.Id, LecturesList);
 
             }
             else
             {
-                DisplayLectures(CurrentTeacher.Id, LecturesList, LecturesIdList);
+                DisplayLectures(CurrentTeacher.Id, LecturesList);
             }
         }
 
@@ -473,7 +491,7 @@ namespace Do_platform
                     Name = AddLectureTextBox.Text.Trim(),
                     Teacher_id = CurrentTeacher.Id
                 };
-                LecturesIdList.Add(NewLecture);
+               
                 ApplicatonContext.AddLecture(NewLecture, CurrentTeacher.Id);
                 if (ApplicatonContext.IsAddedLecture)
                 {
@@ -491,14 +509,6 @@ namespace Do_platform
             }
             Lecture SelectedLecture = ApplicatonContext.GetLectures(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
             lectures.Visibility = Visibility.Hidden;
-            lectureNamelabel.Text = "Текст лекции";
-            testAddQuestionBox.Visibility = Visibility.Hidden;
-            testAddQuestionButton.Visibility = Visibility.Hidden;
-            testQuestionsListBox.Visibility = Visibility.Hidden;
-            lectureNameWrapper.Visibility = Visibility;
-            removeTestQuestion.Visibility = Visibility.Hidden;
-            EditTestQuestion.Visibility = Visibility.Hidden;
-            EditLecturePage.Visibility = Visibility.Hidden;
             EditLectureName.Text = LecturesList.SelectedItem.ToString();
             EditLecturePage.Visibility = Visibility;
             EditLectureTheme.Text = SelectedLecture.Theme;
@@ -507,22 +517,23 @@ namespace Do_platform
         private void EditTest_Click(object sender, RoutedEventArgs e)
         {
             testAddQuestionBox.Text = "";
-            if (LecturesList.SelectedItem == null)
+            if (TestsList.SelectedItem == null)
             {
                 return;
             }
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
-            lectures.Visibility = Visibility.Hidden;
+            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == TestsList.SelectedItem.ToString());
+            tests.Visibility = Visibility.Hidden;
             lectureNamelabel.Text = "Вопросы";
-            testAddQuestionBox.Visibility = Visibility;
+            EditTestPage.Visibility = Visibility;
+            /*testAddQuestionBox.Visibility = Visibility;
             testAddQuestionButton.Visibility = Visibility;
             testQuestionsListBox.Visibility = Visibility;
             lectureNameWrapper.Visibility = Visibility.Hidden;
             EditLecturePage.Visibility = Visibility;
             removeTestQuestion.Visibility = Visibility;
-            EditTestQuestion.Visibility = Visibility;
-            EditLectureName.Text = LecturesList.SelectedItem.ToString();
-            EditLectureTheme.Text = SelectedTest.Theme;
+            EditTestQuestion.Visibility = Visibility;*/
+            EditTestName.Text = TestsList.SelectedItem.ToString();
+            EditTestTheme.Text = SelectedTest.Theme;
             DisplayTestQuestions(SelectedTest.Id, testQuestionsListBox);
             
         }
@@ -543,29 +554,29 @@ namespace Do_platform
                 Lecture_body = EditLectureBody.Text,
                 Teacher_id = SelectedLecture.Teacher_id
             });
-            DisplayLectures(CurrentTeacher.Id, LecturesList, LecturesIdList);
+            DisplayLectures(CurrentTeacher.Id, LecturesList);
             EditLecturePage.Visibility = Visibility.Hidden;
             lectures.Visibility = Visibility;
         }
         private void EditTestSave_Click(object sender, RoutedEventArgs e)
         {
-            if (LecturesList.SelectedItem == null)
+            if (TestsList.SelectedItem == null)
             {
                 return;
             }
             //Lecture SelectedLecture = LecturesIdList.Find(item => item.Name == LecturesList.SelectedItem.ToString());
             List<Test> i = ApplicatonContext.GetTests(CurrentTeacher.Id);
-            Test SelectedTest = i.Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            Test SelectedTest = i.Find(item => item.Name == TestsList.SelectedItem.ToString());
             ApplicatonContext.EditTest(SelectedTest.Id, new Test()
             {
-                Name = EditLectureName.Text,
-                Theme = EditLectureTheme.Text,
+                Name = EditTestName.Text,
+                Theme = EditTestTheme.Text,
                 //test_time = 1000,
                 Teacher_id = SelectedTest.Teacher_id
             });
-            DisplayTests(CurrentTeacher.Id, LecturesList);
-            EditLecturePage.Visibility = Visibility.Hidden;
-            lectures.Visibility = Visibility;
+            DisplayTests(CurrentTeacher.Id, TestsList);
+            EditTestPage.Visibility = Visibility.Hidden;
+            tests.Visibility = Visibility;
         }
 
         private void LectureToCourseAdd_Click(object sender, RoutedEventArgs e)
@@ -597,6 +608,16 @@ namespace Do_platform
         private void lecturesReturn_Click(object sender, RoutedEventArgs e)
         {
             lectures.Visibility = Visibility.Hidden;
+            TeacherProfile.Visibility = Visibility;
+        }
+        private void EditTestReturn_Click(object sender, RoutedEventArgs e)
+        {
+            EditTestPage.Visibility = Visibility.Hidden;
+            tests.Visibility = Visibility;
+        }
+        private void testsReturn_Click(object sender, RoutedEventArgs e)
+        {
+            tests.Visibility = Visibility.Hidden;
             TeacherProfile.Visibility = Visibility;
         }
 
@@ -636,7 +657,8 @@ namespace Do_platform
                 return;
             }
             studentNameFromTeacher.Text = studentsList.SelectedItem.ToString();
-            Student i = StudentsIdList.Find(item => item.Name == studentsList.SelectedItem.ToString());
+            //Student i = StudentsIdList.Find(item => item.Name == studentsList.SelectedItem.ToString());
+            Student i = ApplicatonContext.GetStudents().Find(item => item.Login == studentsList.SelectedItem.ToString());
             //List<Student_to_Course> sc = ApplicatonContext.GetStudentsToCourses(i.Id);
             students.Visibility = Visibility.Hidden;
             AddStudentPage.Visibility = Visibility;
@@ -652,7 +674,7 @@ namespace Do_platform
                 StudentsToCourseList.Items.Add(item.Name);
             }
             //DisplayLectureToCourse(CurrentTeacher.Id, LecturesToCourseBox, LecturesIdList, i.Id);
-            DisplayStudentToCourse(CurrentTeacher.Id, StudentsToCourseBox, CoursesIdList, i.Id);
+            DisplayStudentToCourse(CurrentTeacher.Id, StudentsToCourseBox, i.Id);
         }
 
         private void StudentToCourseAdd_Click(object sender, RoutedEventArgs e)
@@ -663,7 +685,7 @@ namespace Do_platform
             }
             List<Student> students = ApplicatonContext.GetStudents();
             List<Course> courses = ApplicatonContext.GetCourses(CurrentTeacher.Id);
-            Student SelectedStudent = students.Find(i => i.Name == studentsList.SelectedItem.ToString());
+            Student SelectedStudent = students.Find(i => i.Login == studentsList.SelectedItem.ToString());
             Course SelectedCourse = courses.Find(item => item.Name == StudentsToCourseBox.SelectedItem.ToString());
             ApplicatonContext.AddStudentToCourse(new Student_to_Course()
             {
@@ -678,7 +700,7 @@ namespace Do_platform
         {
             StudentProfile.Visibility = Visibility.Hidden;
             StudentCourses.Visibility = Visibility;
-            DisplayStudentToCourseForStudent(StudentCoursesList, CoursesIdList, CurrentStudent.Id);
+            DisplayStudentToCourseForStudent(StudentCoursesList, CurrentStudent.Id);
         }
 
         private void StudentLectureButton_Click(object sender, RoutedEventArgs e)
@@ -686,7 +708,7 @@ namespace Do_platform
             isStudentCoursesDisplay = false;
             StudentProfile.Visibility = Visibility.Hidden;
             StudentCourses.Visibility = Visibility;
-            DisplayAllStudentLectures(StudentCoursesList, LecturesIdList, CurrentStudent.Id);
+            DisplayAllStudentLectures(StudentCoursesList, CurrentStudent.Id);
         }
 
         private void StudentTestButton_Click(object sender, RoutedEventArgs e)
@@ -707,10 +729,15 @@ namespace Do_platform
             isTestOpenFromCourse = false;
             currentQuesionIndex = 0;
             trueAnswersCounter = 0;
-            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == StudentTestsList.SelectedItem.ToString());
+            maxTestMarks = 0;
+            //Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == StudentTestsList.SelectedItem.ToString());
+            TextBlock tb = new TextBlock();
+            tb = (TextBlock)StudentTestsList.SelectedItem;
+            CurrentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Id == Convert.ToInt32(tb.Uid));
+            //CurrentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == StudentTestsList.SelectedItem.ToString());
             StudentTests.Visibility = Visibility.Hidden;
             test.Visibility = Visibility;
-            renderTestQuestion(currentTest.Id, currentQuesionIndex);
+            renderTestQuestion(CurrentTest.Id, currentQuesionIndex);
         }
 
         private void StudentCoursesReturn_Click(object sender, RoutedEventArgs e)
@@ -729,22 +756,31 @@ namespace Do_platform
             StudentCourses.Visibility = Visibility.Hidden;
             if (!isStudentCoursesDisplay)
             {
-                Lecture lecture = LecturesIdList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
-                studentLectureName.Text = lecture.Name;
-                studentLectureTheme.Text = lecture.Theme;
-                studentLectureBody.Text = lecture.Lecture_body;
+                //Lecture lecture = LecturesIdList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
+                TextBlock tb = new TextBlock();
+                tb = (TextBlock)StudentCoursesList.SelectedItem;
+                CurrnetLecture = ApplicatonContext.GetAllStudentLectures(CurrentStudent.Id).Find(item => item.Id == Convert.ToInt32(tb.Uid));
+                studentLectureName.Text = CurrnetLecture.Name;
+                studentLectureTheme.Text = CurrnetLecture.Theme;
+                studentLectureBody.Text = CurrnetLecture.Lecture_body;
                 studentLecture.Visibility = Visibility;
             } else
             {
+                TextBlock tb = new TextBlock();
+                tb = (TextBlock)StudentCoursesList.SelectedItem;
+                CurrnetCourse = ApplicatonContext.GetStudentToCourseForStudent(CurrentStudent.Id).Find(item => item.Id == Convert.ToInt32(tb.Uid));
                 studentCourseLecturesList.Items.Clear();
                 studentCourseTestsList.Items.Clear();
                 studentCourse.Visibility = Visibility;
-                List <Course> coursesList = ApplicatonContext.GetStudentToCourseForStudent(CurrentStudent.Id);
-                Course i = coursesList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
-                DisplayLecturesFromCourse(studentCourseLecturesList, LecturesIdList, i.Id);
-                foreach (Test t in ApplicatonContext.GetTestToCourseInclude(i.Id))
+                //List <Course> coursesList = ApplicatonContext.GetStudentToCourseForStudent(CurrentStudent.Id);
+                //Course i = coursesList.Find(item => item.Name == StudentCoursesList.SelectedItem.ToString());
+                DisplayLecturesFromCourse(studentCourseLecturesList, CurrnetCourse.Id);
+                foreach (Test t in ApplicatonContext.GetTestToCourseInclude(CurrnetCourse.Id))
                 {
-                    studentCourseTestsList.Items.Add(t.Name);
+                    TextBlock ttb = new TextBlock();
+                    ttb.Text = t.Name;
+                    ttb.Uid = t.Id.ToString();
+                    studentCourseTestsList.Items.Add(ttb);
                 }
             }
             
@@ -778,7 +814,10 @@ namespace Do_platform
             }
             isLectureDisplayFromCourse = true;
             studentCourse.Visibility = Visibility.Hidden;
-            Lecture lecture = LecturesIdList.Find(item => item.Name == studentCourseLecturesList.SelectedItem.ToString());
+            //Lecture lecture = LecturesIdList.Find(item => item.Name == studentCourseLecturesList.SelectedItem.ToString());
+            TextBlock tb = new TextBlock();
+            tb = (TextBlock)studentCourseLecturesList.SelectedItem;
+            Lecture lecture = ApplicatonContext.GetAllStudentLectures(CurrentStudent.Id).Find(item => item.Id == Convert.ToInt32(tb.Uid));
             studentLectureName.Text = lecture.Name;
             studentLectureTheme.Text = lecture.Theme;
             studentLectureBody.Text = lecture.Lecture_body;
@@ -787,19 +826,29 @@ namespace Do_platform
 
         private int currentQuesionIndex = 0;
         private int trueAnswersCounter = 0;
+        private int maxTestMarks = 0;
+        private Test CurrentTest;
         private void openTestFromCourse_Click(object sender, RoutedEventArgs e)
         {
             isTestOpenFromCourse = true;
             studentCourse.Visibility = Visibility.Hidden;
             currentQuesionIndex = 0;
             trueAnswersCounter = 0;
-            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
+            maxTestMarks = 0;
+            TextBlock tb = new TextBlock();
+            tb = (TextBlock)studentCourseTestsList.SelectedItem;
+            CurrentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Id == Convert.ToInt32(tb.Uid));
+            //Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == studentCourseTestsList.SelectedItem.ToString());
             
             test.Visibility = Visibility;
-            renderTestQuestion(currentTest.Id, currentQuesionIndex);
+            renderTestQuestion(CurrentTest.Id, currentQuesionIndex);
         }
         private void testExit_Click(object sender, RoutedEventArgs e)
         {
+            TestFinishedPage.Visibility = Visibility.Hidden;
+            testQuestionBox.Visibility = Visibility;
+            testAnserButton.Visibility = Visibility;
+            testAnsersContainer.Visibility = Visibility;
             if (isTestOpenFromCourse)
             {
                 studentCourse.Visibility = Visibility;
@@ -815,8 +864,8 @@ namespace Do_platform
         {
             bool isAnswerTrue = false;
             var allButtons = testAnsersContainer.Children.OfType<dynamic>().ToList();
-            Test currentTest = ApplicatonContext.GetAllStudentTests(CurrentStudent.Id).Find(i => i.Name == name.SelectedItem.ToString());
-            List<Test_Answer> answers = ApplicatonContext.GetTestAnswers(ApplicatonContext.GetTestQuestions(currentTest.Id)[currentQuesionIndex].Id);
+            
+            List<Test_Answer> answers = ApplicatonContext.GetTestAnswers(ApplicatonContext.GetTestQuestions(CurrentTest.Id)[currentQuesionIndex].Id);
             List<dynamic> selectedAnswers = allButtons.FindAll(i => i.IsChecked);
             if (selectedAnswers == null && allButtons.Count > 0)
             {
@@ -850,15 +899,30 @@ namespace Do_platform
                     trueAnswersCounter++;
                 }
             }
-
-            currentQuesionIndex++;
-            if (currentQuesionIndex == ApplicatonContext.GetTestQuestions(currentTest.Id).Count)
+            maxTestMarks++;
+            if (allButtons.Count != 0 && allButtons[0] is System.Windows.Controls.CheckBox)
             {
-                testQuestionBox.Text = trueAnswersCounter.ToString();
+                maxTestMarks++;
+            }
+            currentQuesionIndex++;
+            if (currentQuesionIndex == ApplicatonContext.GetTestQuestions(CurrentTest.Id).Count)
+            {
+                testQuestionBox.Visibility = Visibility.Hidden;
+                testAnserButton.Visibility = Visibility.Hidden;
+                testAnsersContainer.Visibility = Visibility.Hidden;
+                TestFinishedPage.Text = $"Ваш результат: {trueAnswersCounter} из {maxTestMarks}.";
+                TestFinishedPage.Visibility = Visibility;
+                ApplicatonContext.AddEstimation(new Estimation()
+                {
+                    Student_id = CurrentStudent.Id,
+                    Test_id = CurrentTest.Id,
+                    Mark = trueAnswersCounter,
+                    Max_mark = maxTestMarks
+                });
             }
             else
             {
-                renderTestQuestion(currentTest.Id, currentQuesionIndex);
+                renderTestQuestion(CurrentTest.Id, currentQuesionIndex);
             }
         }
 
@@ -953,15 +1017,15 @@ namespace Do_platform
         }
         private void removeTest_Click(object sender, RoutedEventArgs e)
         {
-            if (LecturesList.SelectedItem == null)
+            if (TestsList.SelectedItem == null)
             {
                 return;
             }
             //Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
             List<Test> i = ApplicatonContext.GetTests(CurrentTeacher.Id);
-            Test currentTest = i.Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            Test currentTest = i.Find(item => item.Name == TestsList.SelectedItem.ToString());
             ApplicatonContext.RemoveTest(currentTest.Id);
-            LecturesList.Items.Remove(LecturesList.SelectedItem);
+            TestsList.Items.Remove(TestsList.SelectedItem);
         }
 
         private void removeStudent_Click(object sender, RoutedEventArgs e)
@@ -998,32 +1062,32 @@ namespace Do_platform
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            AddLectureTextBox.Text = "";
+            AddTestTextBox.Text = "";
             TeacherProfile.Visibility = Visibility.Hidden;
-            lectures.Visibility = Visibility;
-            addEssence.Click -= AddLecturesButton_Click;
+            tests.Visibility = Visibility;
+            /*addEssence.Click -= AddLecturesButton_Click;
             addEssence.Click += AddTestButton_Click;
             removeEssence.Click -= removeLecture_Click;
             removeEssence.Click += removeTest_Click;
             EditEssense.Click -= EditLecture_Click;
             EditEssense.Click += EditTest_Click;
             EditLectureSave.Click -= EditLectureSave_Click;
-            EditLectureSave.Click += EditTestSave_Click;
-            DisplayTests(CurrentTeacher.Id, LecturesList);
+            EditLectureSave.Click += EditTestSave_Click;*/
+            DisplayTests(CurrentTeacher.Id, TestsList);
         }
         private void AddTestButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AddLectureTextBox.Text != "")
+            if (AddTestTextBox.Text != "")
             {
                 Test NewTest = new Test()
                 {
-                    Name = AddLectureTextBox.Text.Trim(),
+                    Name = AddTestTextBox.Text.Trim(),
                     Teacher_id = CurrentTeacher.Id
                 };
                 ApplicatonContext.AddTest(NewTest, CurrentTeacher.Id);
                 if (ApplicatonContext.IsAddedTest)
                 {
-                    LecturesList.Items.Add(ApplicatonContext.GetTests(CurrentTeacher.Id)[ApplicatonContext.GetTests(CurrentTeacher.Id).Count - 1].Name);
+                    TestsList.Items.Add(ApplicatonContext.GetTests(CurrentTeacher.Id)[ApplicatonContext.GetTests(CurrentTeacher.Id).Count - 1].Name);
                     AddLectureTextBox.Text = "";
                 }
             }
@@ -1032,7 +1096,7 @@ namespace Do_platform
         {
             if (testAddQuestionBox.Text != "")
             {
-                Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+                Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == TestsList.SelectedItem.ToString());
                 Test_Question NewTestQuestion = new Test_Question()
                 {
                     Question_body = testAddQuestionBox.Text.Trim(),
@@ -1052,18 +1116,22 @@ namespace Do_platform
             {
                 return;
             }
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
             //Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
             List<Test_Question> i = ApplicatonContext.GetTestQuestions(SelectedTest.Id);
             Test_Question currentTestQuestion = i.Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             ApplicatonContext.RemoveTestQuestion(currentTestQuestion.Id);
             testQuestionsListBox.Items.Remove(testQuestionsListBox.SelectedItem);
         }
-
+        Test SelectedTest;
         private void EditTestQuestion_Click(object sender, RoutedEventArgs e)
         {
             AddTestAnswerTextBox.Text = "";
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == TestsList.SelectedItem.ToString());
+            if (testQuestionsListBox.SelectedItem == null)
+            {
+                return;
+            }
             List<Test_Question> i = ApplicatonContext.GetTestQuestions(SelectedTest.Id);
             Test_Question currentTestQuestion = i.Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             EditEssense.Visibility = Visibility.Hidden;
@@ -1075,8 +1143,13 @@ namespace Do_platform
 
         private void EditTestAnswer_Click(object sender, RoutedEventArgs e)
         {
+            if (TestAnswersList.SelectedItem == null)
+            {
+                return;
+            }
             testAnswersEdit.Visibility = Visibility.Hidden;
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            
+            //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == TestsList.SelectedItem.ToString());
             Test_Question currentTestQuestion = ApplicatonContext.GetTestQuestions(SelectedTest.Id).Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             Test_Answer currentTestAnswer = ApplicatonContext.GetTestAnswers(currentTestQuestion.Id).Find(item => item.Answer_body == TestAnswersList.SelectedItem.ToString());
             testAnswerEditTextBox.Text = currentTestAnswer.Answer_body;
@@ -1090,7 +1163,7 @@ namespace Do_platform
             {
                 return;
             }
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
             //Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
             Test_Question currentTestQuestion = ApplicatonContext.GetTestQuestions(SelectedTest.Id).Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             Test_Answer currentTestAnswer = ApplicatonContext.GetTestAnswers(currentTestQuestion.Id).Find(item => item.Answer_body == TestAnswersList.SelectedItem.ToString());
@@ -1108,7 +1181,7 @@ namespace Do_platform
         {
             if (AddTestAnswerTextBox.Text != "")
             {
-                Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+                //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
                 List<Test_Question> i = ApplicatonContext.GetTestQuestions(SelectedTest.Id);
                 Test_Question currentTestQuestion = i.Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
                 Test_Answer NewTestAnswer = new Test_Answer()
@@ -1137,7 +1210,7 @@ namespace Do_platform
             {
                 return;
             }
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
             //Course i = CoursesIdList.Find(item => item.Name == coursesList.SelectedItem.ToString());
             Test_Question currentTestQuestion = ApplicatonContext.GetTestQuestions(SelectedTest.Id).Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             Test_Answer currentTestAnswer = ApplicatonContext.GetTestAnswers(currentTestQuestion.Id).Find(item => item.Answer_body == TestAnswersList.SelectedItem.ToString());
@@ -1159,8 +1232,7 @@ namespace Do_platform
             {
                 return;
             }
-            TestQuestionSaveButton.Content = "ok";
-            Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == LecturesList.SelectedItem.ToString());
+            //Test SelectedTest = ApplicatonContext.GetTests(CurrentTeacher.Id).Find(item => item.Name == TestsList.SelectedItem.ToString());
             Test_Question currentTestQuestion = ApplicatonContext.GetTestQuestions(SelectedTest.Id).Find(item => item.Question_body == testQuestionsListBox.SelectedItem.ToString());
             ApplicatonContext.EditTestQuestion(currentTestQuestion.Id, new Test_Question()
             {
@@ -1221,7 +1293,48 @@ namespace Do_platform
             TestsToCourseList.Items.Remove(TestsToCourseList.SelectedItem);
         }
 
-        
+        private void EstimationReturn_Click(object sender, RoutedEventArgs e)
+        {
+            estimations.Visibility = Visibility.Hidden;
+            StudentProfile.Visibility = Visibility;
+        }
+        private void EstimationTeacherReturn_Click(object sender, RoutedEventArgs e)
+        {
+            estimations.Visibility = Visibility.Hidden;
+            TeacherProfile.Visibility = Visibility;
+        }
+
+        private void StudentEstimationButton_Click(object sender, RoutedEventArgs e)
+        {
+            StudentProfile.Visibility = Visibility.Hidden;
+            estimations.Visibility = Visibility;
+            EstimationReturn.Click -= EstimationTeacherReturn_Click;
+            EstimationReturn.Click += EstimationReturn_Click;
+            //List<Estimation> est = ApplicatonContext.GetEstimationsForStudent(CurrentStudent.Id);
+            List<EstimationToDisplay> estimationTableSourse = new List<EstimationToDisplay>();
+            foreach(Estimation est in ApplicatonContext.GetEstimationsForStudent(CurrentStudent.Id))
+            {
+                estimationTableSourse.Add(EstimationTableFilling(est));
+            }
+
+            estimationTable.ItemsSource = estimationTableSourse;
+        }
+
+        private void TeacherEstimationButton_Click(object sender, RoutedEventArgs e)
+        {
+            TeacherProfile.Visibility = Visibility.Hidden;
+            estimations.Visibility = Visibility;
+            EstimationReturn.Click -= EstimationReturn_Click;
+            EstimationReturn.Click += EstimationTeacherReturn_Click;
+            //List<Estimation> est = ApplicatonContext.GetEstimationsForStudent(CurrentStudent.Id);
+            List<EstimationToDisplay> estimationTableSourse = new List<EstimationToDisplay>();
+            foreach(Estimation est in ApplicatonContext.GetEstimationsForTeacher(CurrentTeacher.Id))
+            {
+                estimationTableSourse.Add(EstimationTableFilling(est));
+            }
+
+            estimationTable.ItemsSource = estimationTableSourse;
+        }
 
         private void loginBox_LostFocus(object sender, RoutedEventArgs e)
         {
