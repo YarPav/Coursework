@@ -50,7 +50,7 @@
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Тесты" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="TestButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Оценки" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="TeacherEstimationButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Студенты" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentButton_Click"></Button>
-            <TextBlock Foreground="AliceBlue"  x:Name="userName" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
+            <TextBlock Foreground="AliceBlue"  x:Name="userName" Grid.Column="5" HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="20px"></TextBlock>
         </Grid>
          <Grid Background="DarkSlateGray" x:Name="StudentProfile" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -244,7 +244,7 @@
             <TextBlock Foreground="AliceBlue"  Grid.Row="3" Grid.Column="1" MaxWidth="500px" Grid.ColumnSpan="3">Тема</TextBlock>
             <TextBox Background="CadetBlue" Foreground="AliceBlue" Grid.Column="1" Grid.Row="4" MaxWidth="500px" x:Name="EditLectureTheme" Grid.ColumnSpan="3"></TextBox>
             <TextBlock Foreground="AliceBlue"  Grid.Row="5" Grid.Column="1" MaxWidth="500px" x:Name="lectureNamelabel" Grid.ColumnSpan="3">Текст лекции</TextBlock>
-            <TextBox Grid.Column="1" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="3" MaxWidth="500px" AcceptsReturn="False" x:Name="EditLectureBody" Background="CadetBlue" Foreground="AliceBlue">
+            <TextBox Grid.Column="1" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="3" MaxWidth="500px" TextWrapping="Wrap" AcceptsReturn="False" x:Name="EditLectureBody" Background="CadetBlue" Foreground="AliceBlue">
                 
             </TextBox>
             <Button BorderBrush="CornflowerBlue" Background="CornflowerBlue" Foreground="AliceBlue"  Content="Сохранить" Grid.Column="1" Grid.Row="11" MaxWidth="500px" Click="EditLectureSave_Click" x:Name="EditLectureSave" Grid.ColumnSpan="3"></Button>
