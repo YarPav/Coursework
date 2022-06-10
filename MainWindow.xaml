@@ -50,7 +50,7 @@
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Тесты" Grid.Column="2" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="TestButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Оценки" Grid.Column="3" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="TeacherEstimationButton_Click"></Button>
             <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Студенты" Grid.Column="4" FontSize="16px" Margin="10px 0" Cursor="Hand" Click="StudentButton_Click"></Button>
-            <TextBlock Foreground="AliceBlue"  x:Name="userName" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20px"></TextBlock>
+            <TextBlock Foreground="AliceBlue"  x:Name="userName" Grid.Column="5" HorizontalAlignment="Left"  VerticalAlignment="Center" FontSize="20px"></TextBlock>
         </Grid>
          <Grid Background="DarkSlateGray" x:Name="StudentProfile" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -244,7 +244,7 @@
             <TextBlock Foreground="AliceBlue"  Grid.Row="3" Grid.Column="1" MaxWidth="500px" Grid.ColumnSpan="3">Тема</TextBlock>
             <TextBox Background="CadetBlue" Foreground="AliceBlue" Grid.Column="1" Grid.Row="4" MaxWidth="500px" x:Name="EditLectureTheme" Grid.ColumnSpan="3"></TextBox>
             <TextBlock Foreground="AliceBlue"  Grid.Row="5" Grid.Column="1" MaxWidth="500px" x:Name="lectureNamelabel" Grid.ColumnSpan="3">Текст лекции</TextBlock>
-            <TextBox Grid.Column="1" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="3" MaxWidth="500px" AcceptsReturn="False" x:Name="EditLectureBody" Background="CadetBlue" Foreground="AliceBlue">
+            <TextBox Grid.Column="1" Grid.Row="6" Grid.RowSpan="2" Grid.ColumnSpan="3" MaxWidth="500px" TextWrapping="Wrap" AcceptsReturn="False" x:Name="EditLectureBody" Background="CadetBlue" Foreground="AliceBlue">
                 
             </TextBox>
             <Button BorderBrush="CornflowerBlue" Background="CornflowerBlue" Foreground="AliceBlue"  Content="Сохранить" Grid.Column="1" Grid.Row="11" MaxWidth="500px" Click="EditLectureSave_Click" x:Name="EditLectureSave" Grid.ColumnSpan="3"></Button>
@@ -415,6 +415,8 @@
                 <RowDefinition Height="0.05*"></RowDefinition>
                 <RowDefinition Height="0.15*"></RowDefinition>
                 <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.05*" MaxHeight="50px"></RowDefinition>
+                <RowDefinition Height="0.1*" MaxHeight="50px"></RowDefinition>
                 <RowDefinition Height="0.6*"></RowDefinition>
                 <RowDefinition Height="0.1*"></RowDefinition>
                 <RowDefinition Height="0.05*"></RowDefinition>
@@ -422,21 +424,23 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.25*"></ColumnDefinition>
                 <ColumnDefinition Width="0.08*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
                 <ColumnDefinition Width="0.4*"></ColumnDefinition>
                 <ColumnDefinition Width="0.4*"></ColumnDefinition>
+                <ColumnDefinition Width="0.08*"></ColumnDefinition>
                 <ColumnDefinition Width="0.33*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox Background="CadetBlue" Foreground="AliceBlue" Grid.Row="0" Grid.Column="0" Margin="10px 0 0 0" x:Name="AddTestAnswerTextBox"></TextBox>
-            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Grid.Column="1" Grid.Row="0" Content="→" FontSize="25px" VerticalContentAlignment="Center" Click="AddTestAnswerButton_Click"></Button>
-            <TextBlock Grid.Row="1" Grid.Column="2" Foreground="AliceBlue">Текст вопроса</TextBlock>
-            <TextBox x:Name="TestQuestionEditTextBox" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Background="CadetBlue" Foreground="AliceBlue" TextWrapping="Wrap"></TextBox>
-            <Button x:Name="TestQuestionSaveButton" Click="TestQuestionSaveButton_Click" Content="Сохранить" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Background="CornflowerBlue" Foreground="AliceBlue" FontSize="16px" BorderBrush="CornflowerBlue"></Button>
-            <ListBox Foreground="AliceBlue" Background="CadetBlue" x:Name="TestAnswersList" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="0 20px">
+            <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Foreground="AliceBlue">Текст вопроса</TextBlock>
+            <TextBox x:Name="TestQuestionEditTextBox" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" Background="CadetBlue" Foreground="AliceBlue" TextWrapping="Wrap"></TextBox>
+            <Button x:Name="TestQuestionSaveButton" Click="TestQuestionSaveButton_Click" Content="Сохранить" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="3" Background="CornflowerBlue" Foreground="AliceBlue" FontSize="16px" BorderBrush="CornflowerBlue"></Button>
+            <TextBox Background="CadetBlue" Foreground="AliceBlue" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="3" x:Name="AddTestAnswerTextBox"></TextBox>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Grid.Column="5" Grid.Row="5" Content="+" FontSize="18" VerticalContentAlignment="Center" Click="AddTestAnswerButton_Click"></Button>
+            <ListBox Foreground="AliceBlue" Background="CadetBlue" x:Name="TestAnswersList" Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="4">
                 <TextBlock Foreground="AliceBlue"  FontSize="18px" FontWeight="bold">Ответы на вопрос</TextBlock>
             </ListBox>
-            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="5" Click="EditTestAnswer_Click"  x:Name="EditTestAnswer" Margin="0 0 10 0"></Button>
-            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Удалить" FontSize="16px" Grid.Column="3" Grid.Row="5" Click="DeleteTestAnswer_Click"  x:Name="DeleteTestAnswer" Margin="10 0 0 0"></Button>
-            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Назад" Grid.Column="4" HorizontalAlignment="Center" Padding="25 0" x:Name="TestAnswerReturn" Click="TestAnswerReturn_Click"></Button>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Редактировать" FontSize="16px" Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="2" Click="EditTestAnswer_Click"  x:Name="EditTestAnswer" Margin="0 0 10 0"></Button>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Удалить" FontSize="16px" Grid.Column="4" Grid.Row="7" Grid.ColumnSpan="2" Click="DeleteTestAnswer_Click"  x:Name="DeleteTestAnswer" Margin="10 0 0 0"></Button>
+            <Button Background="CornflowerBlue" Foreground="AliceBlue"  Content="Назад" Grid.Column="6" HorizontalAlignment="Center" Padding="25 0" x:Name="TestAnswerReturn" Click="TestAnswerReturn_Click"></Button>
         </Grid>
         <Grid Background="DarkSlateGray" x:Name="testAnswerEdit" Visibility="Hidden">
             <Grid.RowDefinitions>
